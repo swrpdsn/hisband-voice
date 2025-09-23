@@ -1,4 +1,5 @@
 # Hisband Voice (by HisbandHR.AI)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Hinglish AI Calling MVP for SMBs (builders first, later recruiters/clinics).  
 **Upload leads → Auto-call → Book site visits → WhatsApp confirm → Track in dashboard.**
