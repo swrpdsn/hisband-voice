@@ -23,7 +23,7 @@
   <meta name="twitter:description" content="Upload leads → AI calls in Hinglish → Confirms visit → WhatsApp map → Simple dashboard.">
   <meta name="twitter:image" content="/og-image.jpg">
 
-  <!-- Icons / Manifest (put these files in your repo root) -->
+  <!-- Icons / Manifest -->
   <link rel="icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="manifest" href="/site.webmanifest">
@@ -32,8 +32,7 @@
   <!-- NAV -->
   <header class="sticky top-0 z-30 border-b bg-white/80 backdrop-blur">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-      <a href="#" class="flex items-center gap-2 font-semibold">
-        <!-- Simple Monogram Logo -->
+      <a href="index.html" class="flex items-center gap-2 font-semibold">
         <svg class="h-8 w-8" viewBox="0 0 48 48" aria-hidden="true">
           <rect x="4" y="4" width="40" height="40" rx="10" fill="#000"/>
           <text x="24" y="28" text-anchor="middle" font-size="14" fill="#fff" font-family="ui-sans-serif, system-ui">HV</text>
@@ -49,12 +48,11 @@
         <a href="#faq" class="hover:text-black/80">FAQ</a>
       </nav>
       <div class="hidden items-center gap-2 md:flex">
-        <a href="#" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Login</a>
-        <a href="#cta" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">Start Free Trial</a>
+        <a href="index.html" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Login</a>
+        <a href="#auth" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">Start Free Trial</a>
       </div>
       <button id="menuBtn" class="md:hidden rounded border px-3 py-1.5 text-sm" aria-controls="mnav" aria-expanded="false" aria-label="Toggle menu">Menu</button>
     </div>
-    <!-- mobile menu -->
     <div id="mnav" class="hidden border-t bg-white md:hidden transition-all duration-200">
       <div class="mx-auto max-w-7xl px-4 py-3 space-y-2 text-sm">
         <a href="#features" class="block">Features</a>
@@ -63,8 +61,8 @@
         <a href="#pricing" class="block">Pricing</a>
         <a href="#faq" class="block">FAQ</a>
         <div class="flex gap-2 pt-2">
-          <a href="#" class="rounded border px-3 py-1.5">Login</a>
-          <a href="#cta" class="rounded bg-black px-3 py-1.5 text-white">Start Free Trial</a>
+          <a href="index.html" class="rounded border px-3 py-1.5">Login</a>
+          <a href="#auth" class="rounded bg-black px-3 py-1.5 text-white">Start Free Trial</a>
         </div>
       </div>
     </div>
@@ -77,7 +75,7 @@
         <h1 class="text-3xl font-bold leading-tight md:text-4xl">Hinglish AI Calling for Builders — <span class="text-black">Book Site Visits on Autopilot</span></h1>
         <p class="mt-3 text-gray-600">Upload leads → AI calls in Hinglish → Confirms visit → Sends WhatsApp with map → Everything visible in one simple dashboard.</p>
         <div class="mt-5 flex gap-3">
-          <a href="#cta" class="rounded bg-black px-5 py-2 text-white hover:bg-black/90">Start Free Trial</a>
+          <a href="#auth" class="rounded bg-black px-5 py-2 text-white hover:bg-black/90">Start Free Trial</a>
           <a href="#dashboard" class="rounded border px-5 py-2 hover:bg-gray-50">See Dashboard</a>
         </div>
         <div class="mt-5 flex items-center gap-6 text-xs text-gray-600">
@@ -91,7 +89,6 @@
         <div class="mt-4 text-xs text-gray-500">DLT-ready • Works with Exotel/Airtel IQ/Twilio • Low monthly cost</div>
       </div>
       <div class="rounded-xl border bg-white p-4 shadow-sm">
-        <!-- Dashboard preview card -->
         <div class="grid grid-cols-2 gap-3">
           <div class="rounded-lg border p-3">
             <div class="text-xs text-gray-500">Calls Made</div>
@@ -212,7 +209,7 @@
     </div>
   </section>
 
-  <!-- DASHBOARD PREVIEW + PARTNERS -->
+  <!-- DASHBOARD PREVIEW -->
   <section id="dashboard" class="border-b bg-gray-50">
     <div class="mx-auto max-w-7xl px-4 py-12 md:py-16">
       <h2 class="text-2xl font-bold">Dashboard preview</h2>
@@ -223,7 +220,7 @@
           <ul class="space-y-2 text-sm">
             <li>✅ Priya — Visit booked Sat 4 PM (Kandivali)</li>
             <li>📞 Rahul — Callback tomorrow 11 AM</li>
-            <li>❌ Anita — Not interested (budget &lt; 60L)</li>
+            <li>❌ Anita — Not interested (budget < 60L)</li>
           </ul>
         </div>
         <div class="rounded-lg border bg-white p-5">
@@ -280,7 +277,6 @@
         </div>
       </div>
 
-      <!-- Integrations row -->
       <div class="mt-8">
         <div class="text-sm font-semibold text-gray-700">Integrates with</div>
         <div class="mt-3 flex flex-wrap items-center gap-4 opacity-80">
@@ -309,7 +305,7 @@
             <li>1 project</li>
             <li>WhatsApp confirmations</li>
           </ul>
-          <a href="#cta" class="mt-4 inline-block rounded bg-black px-4 py-2 text-white">Start</a>
+          <a href="#auth" class="mt-4 inline-block rounded bg-black px-4 py-2 text-white">Start</a>
         </div>
         <div class="rounded-lg border p-6">
           <div class="text-sm font-semibold">Growth</div>
@@ -319,7 +315,7 @@
             <li>Multiple projects</li>
             <li>Recordings + transcripts</li>
           </ul>
-          <a href="#cta" class="mt-4 inline-block rounded bg-black px-4 py-2 text-white">Choose</a>
+          <a href="#auth" class="mt-4 inline-block rounded bg-black px-4 py-2 text-white">Choose</a>
         </div>
         <div class="rounded-lg border p-6">
           <div class="text-sm font-semibold">Pro</div>
@@ -329,23 +325,22 @@
             <li>Advanced routing</li>
             <li>Priority support</li>
           </ul>
-          <a href="#cta" class="mt-4 inline-block rounded bg-black px-4 py-2 text-white">Talk to us</a>
+          <a href="#auth" class="mt-4 inline-block rounded bg-black px-4 py-2 text-white">Talk to us</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section id="cta" class="border-b bg-gray-50">
-    <div class="mx-auto max-w-7xl px-4 py-12 md:flex md:items-center md:justify-between md:py-16">
-      <div>
-        <h3 class="text-xl font-semibold">Ready to book more site visits?</h3>
-        <p class="mt-2 text-sm text-gray-600">Start your 7-day trial. No credit card.</p>
-      </div>
-      <div class="mt-4 flex gap-3 md:mt-0">
-        <a href="#" class="rounded bg-black px-5 py-2 text-white hover:bg-black/90">Start Free Trial</a>
-        <a href="#" class="rounded border px-5 py-2 hover:bg-gray-50">Book a Demo</a>
-      </div>
+  <!-- AUTH SECTION (Replaces CTA) -->
+  <section id="auth" class="border-b bg-gray-50">
+    <div class="mx-auto max-w-md px-4 py-12">
+      <h3 class="text-xl font-semibold">Log in to Your Dashboard</h3>
+      <input type="email" id="email" placeholder="Work email" class="mt-3 w-full rounded border px-3 py-2">
+      <input type="password" id="password" placeholder="Password" class="mt-2 w-full rounded border px-3 py-2">
+      <button onclick="login()" class="mt-4 w-full rounded bg-black px-4 py-2 text-white">Log In</button>
+      <p class="mt-3 text-sm text-gray-600">
+        Don’t have an account? <a href="#" onclick="signup()" class="text-black hover:underline">Sign up</a>
+      </p>
     </div>
   </section>
 
@@ -388,25 +383,6 @@
     </div>
   </footer>
 
-  <script>
-    // mobile menu
-    const btn = document.getElementById('menuBtn');
-    const m = document.getElementById('mnav');
-    btn?.addEventListener('click', () => {
-      const isOpen = !m.classList.contains('hidden');
-      m.classList.toggle('hidden');
-      btn.setAttribute('aria-expanded', String(!isOpen));
-    });
-
-    // safe rel for external links
-    document.querySelectorAll('a[target="_blank"]').forEach(a => {
-      a.setAttribute('rel','noopener');
-    });
-
-    // year
-    document.getElementById('yr').textContent = new Date().getFullYear();
-  </script>
-
   <!-- FAQ Schema for SEO -->
   <script type="application/ld+json">
   {
@@ -431,6 +407,68 @@
     }]
   }
   </script>
+
+  <!-- MAIN JS: Supabase Auth + UI -->
+  <script type="module">
+    // Load Supabase
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    // 🔑 Your Supabase Config (NO extra spaces!)
+    const supabaseUrl = 'https://hsrkrjfcaevsseldoddt.supabase.co'
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+    // Check session on load
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        window.location.href = '/dashboard.html'
+      }
+    }
+
+    // Login
+    async function login() {
+      const email = document.getElementById('email')?.value
+      const password = document.getElementById('password')?.value
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        alert('Login failed: ' + error.message)
+      } else {
+        window.location.href = '/dashboard.html'
+      }
+    }
+
+    // Signup
+    async function signup() {
+      const email = document.getElementById('email')?.value
+      const password = document.getElementById('password')?.value
+      const { error } = await supabase.auth.signUp({ email, password })
+      if (error) {
+        alert('Signup failed: ' + error.message)
+      } else {
+        alert('Account created! Try logging in.')
+      }
+    }
+
+    // Mobile menu toggle
+    const btn = document.getElementById('menuBtn')
+    const m = document.getElementById('mnav')
+    btn?.addEventListener('click', () => {
+      const isOpen = !m.classList.contains('hidden')
+      m.classList.toggle('hidden')
+      btn.setAttribute('aria-expanded', String(!isOpen))
+    })
+
+    // Year in footer
+    document.getElementById('yr')?.textContent = new Date().getFullYear()
+
+    // External links
+    document.querySelectorAll('a[target="_blank"]').forEach(a => {
+      a.setAttribute('rel', 'noopener')
+    })
+
+    // Run on load
+    checkSession()
+  </script>
 </body>
 </html>
-
