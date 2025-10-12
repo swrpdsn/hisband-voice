@@ -26,7 +26,7 @@
             // Display user email
             document.getElementById('welcome-email').innerText = session.user.email;
 
-            // Optional: Fetch existing profile data (for editing)
+            // Fetch existing profile data to pre-fill the form
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('full_name, company_name, phone_number')
@@ -43,31 +43,43 @@
         async function saveProfile(e) {
             e.preventDefault();
             const errorBox = document.getElementById('profileError');
-            errorBox.innerText = ''; // Clear previous
+            const submitBtn = document.getElementById('submitBtn');
+            errorBox.innerText = ''; 
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Saving...';
 
             const fullName = document.getElementById('fullName').value.trim();
             const company = document.getElementById('company').value.trim();
             const phone = document.getElementById('phone').value.trim();
 
-            // Simple validation
+            // 1. Simple validation (Fields empty)
             if (!fullName || !company || !phone) {
                 errorBox.innerText = 'All fields are required.';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Go to Dashboard';
                 return;
             }
+            // 2. Indian Mobile Validation
             if (!/^[6-9]\d{9}$/.test(phone)) {
-                errorBox.innerText = 'Enter a valid 10-digit Indian mobile number.';
+                errorBox.innerText = 'Enter a valid 10-digit Indian mobile number (6 to 9 start).';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Go to Dashboard';
                 return;
             }
 
-            // Upsert (Update or Insert) to profiles table
+            // 3. UPSERT: The Correct Supabase Command to Insert or Update
             const { error } = await supabase.from('profiles').upsert([
                 { id: session.user.id, full_name: fullName, company_name: company, phone_number: phone }
-            ], { onConflict: 'id' }); // This line prevents duplicate key errors
+            ]);
 
             if (error) {
                 errorBox.innerText = 'Error saving profile: ' + error.message;
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Go to Dashboard';
             } else {
-                alert('Profile saved! Welcome to the dashboard.'); // Using alert for now, can be replaced by a toast if needed.
+                errorBox.innerText = '';
+                // Using a final alert before redirecting, can replace with showToast later
+                alert('Profile saved! Welcome to the dashboard.'); 
                 window.location.href = '/dashboard.html';
             }
         }
@@ -85,22 +97,22 @@
 
         <form id="onboardingForm" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                <label class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
                 <input type="text" id="fullName" required class="mt-1 w-full border rounded-md px-3 py-2">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Company Name (Builder)</label>
+                <label class="block text-sm font-medium text-gray-700">Company Name (Builder) <span class="text-red-500">*</span></label>
                 <input type="text" id="company" required class="mt-1 w-full border rounded-md px-3 py-2">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">WhatsApp Phone (10 Digits)</label>
-                <input type="tel" id="phone" required class="mt-1 w-full border rounded-md px-3 py-2">
+                <label class="block text-sm font-medium text-gray-700">WhatsApp Phone (10 Digits) <span class="text-red-500">*</span></label>
+                <input type="tel" id="phone" required class="mt-1 w-full border rounded-md px-3 py-2" placeholder="e.g., 9876543210">
             </div>
             
             <!-- Error Box -->
             <p id="profileError" class="text-red-600 text-center text-sm mb-4"></p>
 
-            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Go to Dashboard</button>
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Go to Dashboard</button>
         </form>
     </div>
 </body>
