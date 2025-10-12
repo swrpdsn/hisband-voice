@@ -35,7 +35,10 @@
         Hisband Voice
       </a>
       <div class="hidden items-center gap-2 md:flex">
-        <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
+        <!-- Dynamic content: Log In button or Go to Dashboard button -->
+        <div id="auth-nav-container">
+            <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
+        </div>
         <a href="https://wa.me/919920225781" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">WhatsApp</a>
       </div>
       <button id="menuBtn" class="md:hidden rounded border px-3 py-1.5 text-sm" aria-label="Toggle menu">Menu</button>
@@ -249,6 +252,19 @@
           Don’t have an account? Sign up
         </button>
       </p>
+
+      <!-- Divider -->
+      <div class="flex items-center my-4">
+          <div class="flex-grow border-t border-gray-300"></div>
+          <span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
+          <div class="flex-grow border-t border-gray-300"></div>
+      </div>
+
+      <!-- Google SSO Button -->
+      <button onclick="ssoLogin('google')" class="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo-google-40px.png" alt="Google" class="w-5 h-5 mr-2">
+          Continue with Google
+      </button>
       
       <p id="loginMessage" class="mt-2 text-sm text-red-600 text-center"></p>
     </div>
@@ -282,6 +298,16 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
     )
 
+    // === TOAST/NOTIFICATION FRAMEWORK ===
+    function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = `fixed bottom-4 right-4 p-3 rounded-md text-sm shadow-lg z-50 ${isError ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`;
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+    window.showToast = showToast; 
+
     // === UI HANDLERS (Variables) ===
     const loginModal = document.getElementById('loginModal');
     const loginEmail = document.getElementById('loginEmail');
@@ -293,6 +319,8 @@
     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
     const forgotEmail = document.getElementById('forgotEmail');
     const forgotMessage = document.getElementById('forgotMessage');
+    const authNavContainer = document.getElementById('auth-nav-container');
+
     const menuBtn = document.getElementById('menuBtn');
     const mnav = document.getElementById('mnav');
     const yr = document.getElementById('yr');
@@ -315,7 +343,7 @@
         }
     }
 
-    // NEW: Unified Submit function
+    // NEW: Unified Submit function (Email/Password)
     async function submitAuth() {
         loginMessage.innerText = ''; // Clear message
         const email = loginEmail?.value;
@@ -329,7 +357,7 @@
             // LOGIN ACTION
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
-                loginMessage.innerText = 'Login failed: ' + error.message;
+                showToast('Login failed: ' + error.message, true);
             } else {
                 window.location.href = '/dashboard.html';
             }
@@ -337,14 +365,30 @@
             // SIGNUP ACTION
             const { error } = await supabase.auth.signUp({ email, password });
             if (error) {
-                loginMessage.innerText = 'Signup failed: ' + error.message;
+                showToast('Signup failed: ' + error.message, true);
             } else {
-                loginMessage.innerText = 'Account created! Please log in below.';
-                // Auto-switch to Login mode after successful signup
-                toggleAuthMode('login'); 
+                showToast('Account created! Please complete your profile.', false);
+                // Redirect to Onboarding page (Collect Name/Company/Phone)
+                window.location.href = '/onboarding.html';
             }
         }
     }
+
+    // NEW: SSO Logic
+    async function ssoLogin(provider) {
+        showToast('Redirecting to ' + provider.charAt(0).toUpperCase() + provider.slice(1) + ' for login...', false);
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: provider,
+            options: {
+                redirectTo: window.location.origin + '/dashboard.html',
+            }
+        });
+
+        if (error) {
+            showToast('SSO Login failed: ' + error.message, true);
+        }
+    }
+
 
     // NEW: Forgot Password Logic
     window.openForgotPasswordModal = function() {
@@ -369,9 +413,9 @@
         });
 
         if (error) {
-            forgotMessage.innerText = 'Error: ' + error.message;
+            showToast('Error: ' + error.message, true);
         } else {
-            forgotMessage.innerText = 'Password reset link sent to your email!';
+            showToast('Password reset link sent to your email!', false);
         }
     }
 
@@ -386,12 +430,25 @@
         loginModal?.classList.add('hidden');
     }
     
-    // Auto-redirect if already logged in
+    // Auto-redirect and update nav bar
     async function checkAuthAndRedirect() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session, user } } = await supabase.auth.getSession();
+      
       if (session) {
-        window.location.href = '/dashboard.html';
+          // If logged in, update the nav bar to show Dashboard button
+          authNavContainer.innerHTML = `
+              <a href="/dashboard.html" class="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">Go to Dashboard</a>
+              <button onclick="window.logout()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log out</button>
+          `;
       }
+    }
+
+    // NEW: Logout function (Needed for Dashboard button and clean UX)
+    window.logout = async function() {
+        await supabase.auth.signOut();
+        showToast('Logged out successfully.', false);
+        // We reload to trigger checkAuthAndRedirect which finds no session and displays login buttons
+        setTimeout(() => { window.location.href = '/index.html'; }, 500); 
     }
 
     // === INIT (Sabse Zaroori Function) ===
