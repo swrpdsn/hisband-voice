@@ -8,6 +8,7 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         window.supabase = createClient(
+            // 🔑 Supabase Keys
             'https://hsrkrjfcaevsseldoddt.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
         );
@@ -22,29 +23,51 @@
                 return;
             }
             
+            // Display user email
             document.getElementById('welcome-email').innerText = session.user.email;
+
+            // Optional: Fetch existing profile data (for editing)
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, company_name, phone_number')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profile) {
+                document.getElementById('fullName').value = profile.full_name || '';
+                document.getElementById('company').value = profile.company_name || '';
+                document.getElementById('phone').value = profile.phone_number || '';
+            }
         }
 
         async function saveProfile(e) {
             e.preventDefault();
-            const fullName = document.getElementById('fullName').value;
-            const company = document.getElementById('company').value;
-            const phone = document.getElementById('phone').value;
+            const errorBox = document.getElementById('profileError');
+            errorBox.innerText = ''; // Clear previous
 
+            const fullName = document.getElementById('fullName').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            // Simple validation
             if (!fullName || !company || !phone) {
-                alert('All fields are required.');
+                errorBox.innerText = 'All fields are required.';
+                return;
+            }
+            if (!/^[6-9]\d{9}$/.test(phone)) {
+                errorBox.innerText = 'Enter a valid 10-digit Indian mobile number.';
                 return;
             }
 
-            // Insert into Supabase 'profiles' table (assuming you created it)
-            const { error } = await supabase.from('profiles').insert([
+            // Upsert (Update or Insert) to profiles table
+            const { error } = await supabase.from('profiles').upsert([
                 { id: session.user.id, full_name: fullName, company_name: company, phone_number: phone }
-            ], { onConflict: 'id' }); 
+            ], { onConflict: 'id' }); // This line prevents duplicate key errors
 
             if (error) {
-                alert('Error saving profile: ' + error.message);
+                errorBox.innerText = 'Error saving profile: ' + error.message;
             } else {
-                alert('Profile saved! Welcome to the dashboard.');
+                alert('Profile saved! Welcome to the dashboard.'); // Using alert for now, can be replaced by a toast if needed.
                 window.location.href = '/dashboard.html';
             }
         }
@@ -70,9 +93,13 @@
                 <input type="text" id="company" required class="mt-1 w-full border rounded-md px-3 py-2">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">WhatsApp Phone</label>
+                <label class="block text-sm font-medium text-gray-700">WhatsApp Phone (10 Digits)</label>
                 <input type="tel" id="phone" required class="mt-1 w-full border rounded-md px-3 py-2">
             </div>
+            
+            <!-- Error Box -->
+            <p id="profileError" class="text-red-600 text-center text-sm mb-4"></p>
+
             <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Go to Dashboard</button>
         </form>
     </div>
