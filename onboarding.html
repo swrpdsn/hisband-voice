@@ -1,478 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hisband Voice — AI Calling CRM for Real Estate Builders</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="theme-color" content="#000000">
-  <meta name="description" content="Hinglish AI calling for real-estate builders. Upload leads, auto-call, book site visits, send WhatsApp, track results in a simple dashboard.">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Hisband Voice — AI Calling CRM for Builders">
-  <meta property="og:description" content="Book site visits on autopilot with Hinglish AI calls. DLT-ready. Works with Exotel, Airtel IQ, Twilio.">
-  <meta property="og:url" content="https://swrpdsn.github.io/hisband-voice">
-  <meta property="og:image" content="/og-image.jpg">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Hisband Voice — AI Calling CRM for Builders">
-  <meta name="twitter:description" content="Upload leads → AI calls in Hinglish → Confirms visit → WhatsApp map → Simple dashboard.">
-  <meta name="twitter:image" content="/og-image.jpg">
-
-  <link rel="icon" href="/favicon.ico">
-</head>
-<body class="bg-white text-gray-900">
-  <!-- NAV -->
-  <header class="sticky top-0 z-30 border-b bg-white/80 backdrop-blur">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-      <a href="index.html" class="flex items-center gap-2 font-bold">
-        <svg class="h-8 w-8" viewBox="0 0 48 48" aria-hidden="true">
-          <rect x="4" y="4" width="40" height="40" rx="10" fill="#000"/>
-          <text x="24" y="28" text-anchor="middle" font-size="14" fill="#fff" font-family="ui-sans-serif, system-ui">HV</text>
-        </svg>
-        Hisband Voice
-      </a>
-      <div class="hidden items-center gap-2 md:flex">
-        <!-- Dynamic buttons will load here (Log In / Go to Dashboard) -->
-        <div id="auth-nav-container" class="flex items-center gap-2">
-            <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
-        </div>
-        <a href="https://wa.me/919920225781" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">WhatsApp</a>
-      </div>
-      <button id="menuBtn" class="md:hidden rounded border px-3 py-1.5 text-sm" aria-label="Toggle menu">Menu</button>
-    </div>
-    <div id="mnav" class="hidden border-t bg-white md:hidden">
-      <div class="mx-auto max-w-7xl px-4 py-3 space-y-2 text-sm">
-        <a href="#" onclick="openLoginModal()" class="block">Log In</a>
-        <a href="https://wa.me/919920225781" class="block rounded bg-black px-3 py-1.5 text-white text-center">WhatsApp</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- HERO + WAITLIST -->
-  <section class="border-b bg-gradient-to-b from-gray-50 to-white py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <div class="text-center max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold md:text-4xl">
-          AI Voice Calling for Builders — <span class="text-black">Book Site Visits in Minutes</span>
-        </h1>
-        <p class="mt-3 text-gray-600">
-          Upload leads → AI calls in Hinglish → Confirms visit → Sends WhatsApp map → All in one dashboard.
-        </p>
-
-        <div class="mt-5 flex items-center justify-center gap-6 text-xs text-gray-600">
-          <div>
-            <div class="font-semibold">“Booked 46 site visits in 3 days!”</div>
-            <div class="flex items-center gap-2 mt-1">
-              <span class="inline-block h-2 w-2 rounded-full bg-green-500"></span>
-              Rajesh Mehta, SkyVilla Mumbai
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- WAITLIST FORM -->
-      <div class="mt-10 max-w-lg mx-auto bg-gray-50 rounded-xl border p-6">
-        <h2 class="text-xl font-bold text-center">Get Early Access — Free for First 10 Builders</h2>
-        <p class="mt-2 text-gray-600 text-center text-sm">
-          Join 20+ Mumbai builders already using Hisband Voice. No credit card. Launching next week.
-        </p>
-        <form action="https://formspree.io/f/xgvnargl" method="POST" class="mt-6 space-y-3">
-          <input type="text" name="name" placeholder="Your Name" required 
-                 class="w-full rounded border px-4 py-2" aria-label="Your full name">
-          <input type="email" name="email" placeholder="Work Email" required 
-                 class="w-full rounded border px-4 py-2" aria-label="Work email">
-          <input type="tel" name="phone" placeholder="WhatsApp Number" required 
-                 class="w-full rounded border px-4 py-2" aria-label="WhatsApp number">
-          <input type="text" name="company" placeholder="Builder / Project Name" required 
-                 class="w-full rounded border px-4 py-2" aria-label="Company or project name">
-          <button type="submit" class="w-full rounded bg-black px-4 py-2 text-white">Reserve My Spot →</button>
-          <input type="hidden" name="_next" value="https://swrpdsn.github.io/hisband-voice/thanks.html" />
-        </form>
-        <p class="mt-3 text-xs text-gray-500 text-center">
-          Your data is safe. We never share it. 
-          <a href="/privacy.html" class="underline">Privacy Policy</a>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES (Rest of the marketing site is perfect and should be kept as is) -->
-  <section class="border-b py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">Everything you need to book site visits</h2>
-      <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Hinglish AI Calling</div>
-          <p class="mt-2 text-sm text-gray-600">Natural Hinglish voice: greet, qualify, offer 2 slots, confirm.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Upload CSV or Auto-capture</div>
-          <p class="mt-2 text-sm text-gray-600">Import Facebook/Google leads or upload CSV in seconds.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">WhatsApp Confirmations</div>
-          <p class="mt-2 text-sm text-gray-600">Auto-send map links & reminders to reduce no-shows.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">DLT-ready, India-first</div>
-          <p class="mt-2 text-sm text-gray-600">Works with Exotel/Airtel IQ/Twilio; respects DND & consent.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Recordings & Transcripts</div>
-          <p class="mt-2 text-sm text-gray-600">Listen, review, and search every call for quality.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Simple Dashboard</div>
-          <p class="mt-2 text-sm text-gray-600">One screen for calls, outcomes, and booked visits.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section class="border-b py-12 bg-gray-50">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">How it works (simple 1–2–3)</h2>
-      <div class="mt-6 grid gap-6 md:grid-cols-3">
-        <div class="rounded-lg border p-5 text-center">
-          <div class="text-sm font-semibold">1) Upload Leads</div>
-          <p class="mt-2 text-sm text-gray-600">CSV import or auto-capture from forms.</p>
-        </div>
-        <div class="rounded-lg border p-5 text-center">
-          <div class="text-sm font-semibold">2) AI Calls in Hinglish</div>
-          <p class="mt-2 text-sm text-gray-600">Qualify, offer 2 slots, confirm visit — automated.</p>
-        </div>
-        <div class="rounded-lg border p-5 text-center">
-          <div class="text-sm font-semibold">3) WhatsApp + Dashboard</div>
-          <p class="mt-2 text-sm text-gray-600">Map links & reminders sent, outcomes tracked.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRICING -->
-  <section class="border-b py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">Simple pricing for SMBs</h2>
-      <p class="mt-2 text-sm text-gray-600 text-center">Minutes included. Add top-ups anytime.</p>
-      <div class="mt-8 grid gap-6 md:grid-cols-3">
-        <div class="rounded-lg border p-6">
-          <div class="text-sm font-semibold">Basic</div>
-          <div class="mt-2 text-3xl font-bold">₹7,000<span class="text-base font-medium text-gray-500">/mo</span></div>
-          <ul class="mt-3 text-sm text-gray-700 space-y-2">
-            <li>✅ 1,000 calling minutes</li>
-            <li>✅ WhatsApp confirmations</li>
-            <li>✅ Real-time dashboard</li>
-          </ul>
-          <p class="mt-2 text-xs text-gray-500">No credit card required. 7-day free trial.</p>
-        </div>
-        <div class="rounded-lg border p-6">
-          <div class="text-sm font-semibold">Growth</div>
-          <div class="mt-2 text-3xl font-bold">₹12,000<span class="text-base font-medium text-gray-500">/mo</span></div>
-          <ul class="mt-3 text-sm text-gray-700 space-y-2">
-            <li>✅ 3,000 minutes</li>
-            <li>✅ Multiple projects</li>
-            <li>✅ Recordings + transcripts</li>
-          </ul>
-          <p class="mt-2 text-xs text-gray-500">No credit card required. 7-day free trial.</p>
-        </div>
-        <div class="rounded-lg border p-6">
-          <div class="text-sm font-semibold">Pro</div>
-          <div class="mt-2 text-3xl font-bold">Custom</div>
-          <ul class="mt-3 text-sm text-gray-700 space-y-2">
-            <li>✅ 10,000+ minutes</li>
-            <li>✅ Advanced routing</li>
-            <li>✅ Priority support</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">FAQ</h2>
-      <div class="mt-6 max-w-3xl mx-auto space-y-4">
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">Kya Hinglish support karta hai?</summary>
-          <p class="mt-2 text-sm text-gray-600">Haan. Hindi + English mix ke liye optimized call flow aur voices.</p>
-        </details>
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">DLT compliance?</summary>
-          <p class="mt-2 text-sm text-gray-600">Outbound campaigns DLT-ready. Consent & DND respect built-in.</p>
-        </details>
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">Kaise integrate hoga?</summary>
-          <p class="mt-2 text-sm text-gray-600">Exotel/AirtelIQ/Twilio se connect. WhatsApp via Gupshup/Twilio.</p>
-        </details>
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">Pricing kaise kaam karta hai?</summary>
-          <p class="mt-2 text-sm text-gray-600">Monthly subscription + minutes included. Extra minutes = ₹1/min.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="border-t py-8">
-    <div class="mx-auto max-w-7xl px-4 text-sm text-gray-600">
-      <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div>© <span id="yr"></span> Hisband Voice. All rights reserved.</div>
-        <div class="flex gap-4">
-          <a href="mailto:hello@hisbandhr.ai" class="hover:text-gray-800">Email</a>
-          <a href="https://wa.me/919920225781" class="hover:text-gray-800">WhatsApp</a>
-          <a href="/privacy.html" class="hover:text-gray-800">Privacy</a>
-          <a href="/terms.html" class="hover:text-gray-800">Terms</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- LOGIN MODAL (The key part) -->
-  <div id="loginModal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg w-full max-w-md p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold" id="authHeader">Log In to Hisband Voice</h3>
-        <button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-700">&times;</button>
-      </div>
-      
-      <input type="email" id="loginEmail" placeholder="Work email" class="w-full rounded border px-3 py-2 mb-3">
-      <input type="password" id="loginPassword" placeholder="Password" class="w-full rounded border px-3 py-2 mb-4">
-      
-      <a href="#" onclick="openForgotPasswordModal()" class="text-xs text-blue-600 hover:underline mt-1 block mb-3">Forgot Password?</a>
-
-      <button onclick="submitAuth()" id="authSubmitButton" class="w-full bg-black text-white py-2 rounded">Log In</button>
-      
-      <p class="mt-3 text-sm text-center">
-        <button id="authToggleButton" onclick="toggleAuthMode()" class="text-black font-medium hover:underline">
-          Don’t have an account? Sign up
-        </button>
-      </p>
-
-      <!-- Divider -->
-      <div class="flex items-center my-4">
-          <div class="flex-grow border-t border-gray-300"></div>
-          <span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
-          <div class="flex-grow border-t border-gray-300"></div>
-      </div>
-
-      <!-- Google SSO Button -->
-      <button onclick="ssoLogin('google')" class="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo-google-40px.png" alt="Google" class="w-5 h-5 mr-2">
-          Continue with Google
-      </button>
-      
-      <p id="loginMessage" class="mt-2 text-sm text-red-600 text-center"></p>
-    </div>
-  </div>
-
-  <!-- FORGOT PASSWORD MODAL -->
-  <div id="forgotPasswordModal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg w-full max-w-md p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold">Reset Password</h3>
-          <button onclick="closeForgotPasswordModal()" class="text-gray-500 hover:text-gray-700">&times;</button>
-        </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - Hisband Voice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        window.supabase = createClient(
+            // 🔑 Supabase Keys
+            'https://hsrkrjfcaevsseldoddt.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
+        );
         
-        <p class="mb-3 text-sm text-gray-600">Enter your email to receive a password reset link.</p>
-        <input type="email" id="forgotEmail" placeholder="Enter your email" class="w-full rounded border px-3 py-2 mb-3">
-        <button onclick="sendPasswordReset()" class="w-full bg-black text-white py-2 rounded">Send Reset Link</button>
+        let session = null;
         
-        <p id="forgotMessage" class="mt-2 text-sm text-red-600 text-center"></p>
-        <p class="mt-3 text-sm text-center"><a href="#" onclick="closeForgotPasswordModal(); openLoginModal();" class="text-blue-600 hover:underline">Back to Log In</a></p>
-      </div>
-  </div>
+        async function init() {
+            const { data: { session: sess } } = await supabase.auth.getSession();
+            session = sess;
+            if (!session) {
+                window.location.href = '/index.html'; // Auth Guard
+                return;
+            }
+            
+            // Display user email
+            document.getElementById('welcome-email').innerText = session.user.email;
 
+            // Fetch existing profile data to pre-fill the form (if user is returning)
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, company_name, phone_number')
+                .eq('id', session.user.id)
+                .single();
 
-  <!-- JS (The final working logic) -->
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    // Supabase client
-    const supabase = createClient(
-      'https://hsrkrjfcaevsseldoddt.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
-    )
-
-    // === TOAST/NOTIFICATION FRAMEWORK ===
-    function showToast(message, isError = false) {
-        const toast = document.createElement('div');
-        toast.className = `fixed bottom-4 right-4 p-3 rounded-md text-sm shadow-lg z-50 ${isError ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`;
-        toast.innerText = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 4000);
-    }
-    window.showToast = showToast; 
-
-
-    // === UI HANDLERS (Variables) ===
-    const loginModal = document.getElementById('loginModal');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPassword = document.getElementById('loginPassword');
-    const loginMessage = document.getElementById('loginMessage');
-    const authHeader = document.getElementById('authHeader');
-    const authSubmitButton = document.getElementById('authSubmitButton');
-    const authToggleButton = document.getElementById('authToggleButton');
-    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-    const forgotEmail = document.getElementById('forgotEmail');
-    const forgotMessage = document.getElementById('forgotMessage');
-    const authNavContainer = document.getElementById('auth-nav-container');
-
-    const menuBtn = document.getElementById('menuBtn');
-    const mnav = document.getElementById('mnav');
-    const yr = document.getElementById('yr');
-
-    let authMode = 'login'; // Global state: 'login' or 'signup'
-
-    // NEW: Toggle function to switch between Login and Signup mode
-    function toggleAuthMode(mode) {
-        authMode = mode || (authMode === 'login' ? 'signup' : 'login');
-        loginMessage.innerText = ''; // Clear message
-
-        if (authMode === 'signup') {
-            authHeader.innerText = 'Create Account';
-            authSubmitButton.innerText = 'Sign Up';
-            authToggleButton.innerHTML = 'Already have an account? Log In';
-        } else {
-            authHeader.innerText = 'Log In to Hisband Voice';
-            authSubmitButton.innerText = 'Log In';
-            authToggleButton.innerHTML = "Don't have an account? Sign up";
-        }
-    }
-
-    // NEW: Unified Submit function (Email/Password)
-    async function submitAuth() {
-        loginMessage.innerText = ''; // Clear message
-        const email = loginEmail?.value;
-        const password = loginPassword?.value;
-        if (!email || !password) {
-            loginMessage.innerText = 'Email and password are required.';
-            return;
+            if (profile) {
+                document.getElementById('fullName').value = profile.full_name || '';
+                document.getElementById('company').value = profile.company_name || '';
+                document.getElementById('phone').value = profile.phone_number || '';
+            }
         }
 
-        if (authMode === 'login') {
-            // LOGIN ACTION
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
+        async function saveProfile(e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('profileError');
+            const submitBtn = document.getElementById('submitBtn');
+            errorBox.innerText = ''; 
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Saving...';
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            // 1. Simple validation (Fields empty)
+            if (!fullName || !company || !phone) {
+                errorBox.innerText = 'All fields are required.';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Go to Dashboard';
+                return;
+            }
+            // 2. Indian Mobile Validation
+            if (!/^[6-9]\d{9}$/.test(phone)) {
+                errorBox.innerText = 'Enter a valid 10-digit Indian mobile number (starting with 6-9).';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Go to Dashboard';
+                return;
+            }
+
+            // 3. UPSERT: The Correct Supabase Command to Insert or Update
+            const { error } = await supabase.from('profiles').upsert([
+                { id: session.user.id, full_name: fullName, company_name: company, phone_number: phone }
+            ], { onConflict: 'id' }); // onConflict is a feature, better to use it if needed for older Supabase versions
+
             if (error) {
-                showToast('Login failed: ' + error.message, true);
+                errorBox.innerText = 'Error saving profile: ' + error.message;
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Go to Dashboard';
             } else {
+                errorBox.innerText = '';
+                alert('Profile saved! Welcome to the dashboard.'); 
                 window.location.href = '/dashboard.html';
             }
-        } else {
-            // SIGNUP ACTION
-            const { error } = await supabase.auth.signUp({ email, password });
-            if (error) {
-                showToast('Signup failed: ' + error.message, true);
-            } else {
-                showToast('Account created! Please complete your profile.', false);
-                // Redirect to Onboarding page
-                window.location.href = '/onboarding.html';
-            }
         }
-    }
 
-    // NEW: SSO Logic
-    async function ssoLogin(provider) {
-        showToast('Redirecting to ' + provider.charAt(0).toUpperCase() + provider.slice(1) + ' for login...', false);
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: provider,
-            options: {
-                redirectTo: window.location.origin + '/dashboard.html',
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('onboardingForm').onsubmit = saveProfile;
+            init();
         });
+    </script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-lg bg-white rounded-xl shadow-2xl p-8">
+        <h1 class="text-3xl font-bold mb-2">Welcome! 👋</h1>
+        <p class="text-gray-600 mb-6">Let's set up your builder profile (<span id="welcome-email" class="font-medium"></span>)</p>
 
-        if (error) {
-            showToast('SSO Login failed: ' + error.message, true);
-        }
-    }
+        <form id="onboardingForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
+                <input type="text" id="fullName" required class="mt-1 w-full border rounded-md px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Company Name (Builder) <span class="text-red-500">*</span></label>
+                <input type="text" id="company" required class="mt-1 w-full border rounded-md px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">WhatsApp Phone (10 Digits) <span class="text-red-500">*</span></label>
+                <input type="tel" id="phone" required class="mt-1 w-full border rounded-md px-3 py-2" placeholder="e.g., 9876543210">
+            </div>
+            
+            <!-- Error Box -->
+            <p id="profileError" class="text-red-600 text-center text-sm mb-4"></p>
 
-
-    // NEW: Forgot Password Logic
-    window.openForgotPasswordModal = function() {
-        forgotPasswordModal?.classList.remove('hidden');
-        loginModal?.classList.add('hidden');
-        forgotMessage.innerText = '';
-    }
-    window.closeForgotPasswordModal = function() {
-        forgotPasswordModal?.classList.add('hidden');
-    }
-    
-    async function sendPasswordReset() {
-        forgotMessage.innerText = '';
-        const email = forgotEmail?.value;
-        if (!email) {
-            forgotMessage.innerText = 'Please enter your email.';
-            return;
-        }
-
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + '/update-password.html', 
-        });
-
-        if (error) {
-            showToast('Error: ' + error.message, true);
-        } else {
-            showToast('Password reset link sent to your email!', false);
-        }
-    }
-
-    // Modal open/close functions
-    window.openLoginModal = function() {
-        loginModal?.classList.remove('hidden');
-        loginMessage.innerText = ''; 
-        authMode = 'login'; // Ensure it starts in login mode
-        toggleAuthMode('login'); // Call to set initial state correctly
-    }
-    window.closeLoginModal = function() {
-        loginModal?.classList.add('hidden');
-    }
-    
-    // Auto-redirect and update nav bar
-    async function checkAuthAndRedirect() {
-      const { data: { session, user } } = await supabase.auth.getSession();
-      
-      if (session) {
-          // If logged in, update the nav bar to show Dashboard button
-          authNavContainer.innerHTML = `
-              <a href="/dashboard.html" class="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">Go to Dashboard</a>
-              <button onclick="window.logout()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log out</button>
-          `;
-      } else {
-          authNavContainer.innerHTML = `
-              <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
-          `;
-      }
-    }
-
-    // NEW: Logout function
-    window.logout = async function() {
-        await supabase.auth.signOut();
-        showToast('Logged out successfully.', false);
-        setTimeout(() => { window.location.href = '/index.html'; }, 500); 
-    }
-
-    // === INIT (Sabse Zaroori Function) ===
-    function init() {
-      // 1. UI Listeners
-      menuBtn?.addEventListener('click', () => { mnav?.classList.toggle('hidden'); });
-      yr.textContent = new Date().getFullYear();
-      document.addEventListener('keydown', (e) => { 
-        if (e.key === 'Escape') {
-            closeLoginModal();
-            closeForgotPasswordModal();
-        }
-      });
-
-      // 2. Auth Check
-      checkAuthAndRedirect();
-    }
-
-    // Run everything ONLY when the page is fully ready
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Go to Dashboard</button>
+        </form>
+    </div>
 </body>
 </html>
