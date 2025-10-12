@@ -130,6 +130,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script>
+    // Check for existing session and redirect
+    (async () => {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (session) {
+        window.location.href = 'dashboard.html';
+      }
+    })();
+
     // Modal Handling
     const signupModal = document.getElementById('signup-modal');
     const loginModal = document.getElementById('login-modal');
