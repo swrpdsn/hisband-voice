@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - Hisband Voice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        window.supabase = createClient(
+            'https://hsrkrjfcaevsseldoddt.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
+        );
+        
+        let session = null;
+        
+        async function init() {
+            const { data: { session: sess } } = await supabase.auth.getSession();
+            session = sess;
+            if (!session) {
+                window.location.href = '/index.html'; // Auth Guard
+                return;
+            }
+            
+            document.getElementById('welcome-email').innerText = session.user.email;
+        }
+
+        async function saveProfile(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const company = document.getElementById('company').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!fullName || !company || !phone) {
+                alert('All fields are required.');
+                return;
+            }
+
+            // Insert into Supabase 'profiles' table (assuming you created it)
+            const { error } = await supabase.from('profiles').insert([
+                { id: session.user.id, full_name: fullName, company_name: company, phone_number: phone }
+            ], { onConflict: 'id' }); 
+
+            if (error) {
+                alert('Error saving profile: ' + error.message);
+            } else {
+                alert('Profile saved! Welcome to the dashboard.');
+                window.location.href = '/dashboard.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('onboardingForm').onsubmit = saveProfile;
+            init();
+        });
+    </script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-lg bg-white rounded-xl shadow-2xl p-8">
+        <h1 class="text-3xl font-bold mb-2">Welcome! 👋</h1>
+        <p class="text-gray-600 mb-6">Let's set up your builder profile (<span id="welcome-email" class="font-medium"></span>)</p>
+
+        <form id="onboardingForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="fullName" required class="mt-1 w-full border rounded-md px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Company Name (Builder)</label>
+                <input type="text" id="company" required class="mt-1 w-full border rounded-md px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">WhatsApp Phone</label>
+                <input type="tel" id="phone" required class="mt-1 w-full border rounded-md px-3 py-2">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Go to Dashboard</button>
+        </form>
+    </div>
+</body>
+</html>
