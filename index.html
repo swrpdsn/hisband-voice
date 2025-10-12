@@ -14,16 +14,16 @@
     <nav class="hidden md:flex items-center space-x-6">
       <a href="#features" class="hover:underline">Features</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <a href="login.html" class="font-semibold">Log In</a>
+      <button id="login-btn" class="font-semibold">Log In</button>
     </nav>
-    <a href="signup.html" class="bg-black text-white px-4 py-2 rounded font-semibold">Reserve My Spot</a>
+    <button id="signup-btn" class="bg-black text-white px-4 py-2 rounded font-semibold">Reserve My Spot</button>
   </header>
 
   <!-- HERO SECTION -->
   <main class="max-w-4xl mx-auto text-center py-20 px-4">
     <h1 class="text-4xl md:text-6xl font-bold mb-4">Never Miss a Lead Again</h1>
     <p class="text-lg md:text-xl text-gray-600 mb-8">Hisband Voice is an AI calling agent that instantly engages your leads, books site visits, and syncs with your calendar, so you can focus on building.</p>
-    <a href="signup.html" class="bg-black text-white px-8 py-3 rounded-full font-bold text-lg">Get Started for Free</a>
+    <button id="signup-btn-hero" class="bg-black text-white px-8 py-3 rounded-full font-bold text-lg">Get Started for Free</button>
   </main>
 
   <!-- FEATURES SECTION -->
@@ -72,9 +72,9 @@
   <footer class="border-t py-12">
     <div class="max-w-6xl mx-auto px-4 text-center text-gray-600">
       <div class="flex justify-center space-x-6 mb-4">
-        <a href="/terms.html" class="hover:underline">Terms of Service</a>
+        <a href="terms.html" class="hover:underline">Terms of Service</a>
         <span>|</span>
-        <a href="/privacy.html" class="hover:underline">Privacy Policy</a>
+        <a href="privacy.html" class="hover:underline">Privacy Policy</a>
         <span>|</span>
         <a href="mailto:support@hisband.ai" class="hover:underline">Contact Support</a>
       </div>
@@ -82,5 +82,99 @@
     </div>
   </footer>
 
+  <!-- MODALS -->
+  <!-- Signup Modal -->
+  <div id="signup-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Create Your Account</h2>
+      <form id="signup-form">
+        <input type="email" id="signup-email" placeholder="Email" required class="w-full p-2 border rounded mb-4"/>
+        <input type="password" id="signup-password" placeholder="Password (min. 6 characters)" required class="w-full p-2 border rounded mb-4"/>
+        <button type="submit" class="w-full bg-black text-white p-2 rounded">Create Account</button>
+      </form>
+      <p id="signup-message" class="mt-4 text-center text-red-500"></p>
+      <button id="close-signup-modal" class="mt-4 w-full text-center hover:underline">Close</button>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Log In</h2>
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email" required class="w-full p-2 border rounded mb-4"/>
+        <input type="password" id="login-password" placeholder="Password" required class="w-full p-2 border rounded mb-4"/>
+        <button type="submit" class="w-full bg-black text-white p-2 rounded">Log In</button>
+      </form>
+      <p id="login-message" class="mt-4 text-center text-red-500"></p>
+      <button id="close-login-modal" class="mt-4 w-full text-center hover:underline">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    // Modal Handling
+    const signupModal = document.getElementById('signup-modal');
+    const loginModal = document.getElementById('login-modal');
+
+    const openSignupModal = () => signupModal.style.display = 'flex';
+    const closeSignupModal = () => signupModal.style.display = 'none';
+    const openLoginModal = () => loginModal.style.display = 'flex';
+    const closeLoginModal = () => loginModal.style.display = 'none';
+
+    document.getElementById('signup-btn').onclick = openSignupModal;
+    document.getElementById('signup-btn-hero').onclick = openSignupModal;
+    document.getElementById('close-signup-modal').onclick = closeSignupModal;
+
+    document.getElementById('login-btn').onclick = openLoginModal;
+    document.getElementById('close-login-modal').onclick = closeLoginModal;
+
+    // Close modals if clicking outside the content
+    window.onclick = function(event) {
+      if (event.target == signupModal) closeSignupModal();
+      if (event.target == loginModal) closeLoginModal();
+    }
+
+    // Auth Logic
+    const signupForm = document.getElementById('signup-form');
+    const loginForm = document.getElementById('login-form');
+    const signupMessage = document.getElementById('signup-message');
+    const loginMessage = document.getElementById('login-message');
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        signupMessage.textContent = error.message;
+      } else {
+        signupMessage.textContent = 'Success! Please check your email to confirm your account.';
+        signupMessage.className = 'mt-4 text-center text-green-500';
+        // Optionally close the modal after a delay
+        setTimeout(() => {
+            closeSignupModal();
+            // Reset message
+            signupMessage.textContent = '';
+            signupMessage.className = 'mt-4 text-center text-red-500';
+        }, 3000);
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        loginMessage.textContent = error.message;
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    });
+  </script>
 </body>
 </html>
