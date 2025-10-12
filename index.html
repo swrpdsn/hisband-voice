@@ -35,8 +35,8 @@
         Hisband Voice
       </a>
       <div class="hidden items-center gap-2 md:flex">
-        <!-- Dynamic content: Log In button or Go to Dashboard button -->
-        <div id="auth-nav-container">
+        <!-- Dynamic buttons will load here (Log In / Go to Dashboard) -->
+        <div id="auth-nav-container" class="flex items-center gap-2">
             <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
         </div>
         <a href="https://wa.me/919920225781" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">WhatsApp</a>
@@ -308,6 +308,7 @@
     }
     window.showToast = showToast; 
 
+
     // === UI HANDLERS (Variables) ===
     const loginModal = document.getElementById('loginModal');
     const loginEmail = document.getElementById('loginEmail');
@@ -368,7 +369,7 @@
                 showToast('Signup failed: ' + error.message, true);
             } else {
                 showToast('Account created! Please complete your profile.', false);
-                // Redirect to Onboarding page (Collect Name/Company/Phone)
+                // Redirect to Onboarding page
                 window.location.href = '/onboarding.html';
             }
         }
@@ -440,14 +441,17 @@
               <a href="/dashboard.html" class="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">Go to Dashboard</a>
               <button onclick="window.logout()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log out</button>
           `;
+      } else {
+          authNavContainer.innerHTML = `
+              <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
+          `;
       }
     }
 
-    // NEW: Logout function (Needed for Dashboard button and clean UX)
+    // NEW: Logout function
     window.logout = async function() {
         await supabase.auth.signOut();
         showToast('Logged out successfully.', false);
-        // We reload to trigger checkAuthAndRedirect which finds no session and displays login buttons
         setTimeout(() => { window.location.href = '/index.html'; }, 500); 
     }
 
