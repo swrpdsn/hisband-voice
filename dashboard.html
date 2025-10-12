@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hisband Voice — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- LIBRARIES FOR EXCEL/CSV PARSING -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    window.supabase = createClient(
+      // 🔑 Supabase Keys - Make sure these are correct
+      'https://hsrkrjfcaevsseldoddt.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
+    )
+  </script>
+</head>
+<body class="bg-gray-50 p-4 md:p-8">
+  <div class="max-w-6xl mx-auto">
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Hisband Voice Dashboard</h1>
+      <button onclick="logout()" class="text-red-600 hover:underline">Log out</button>
+    </div>
+
+    <!-- UPLOAD SECTION -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <h2 class="text-lg font-semibold mb-3">Upload Leads (CSV/Excel)</h2>
+      <p class="text-sm text-gray-600 mb-3">Must have columns: <code>name, phone, project</code></p>
+      <!-- Input accepts both CSV and the two common Excel types -->
+      <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="csvFile" class="mb-3">
+      <button onclick="uploadFile()" class="bg-black text-white px-4 py-2 rounded">Upload & Process</button>
+      <p id="uploadStatus" class="mt-2 text-sm text-gray-600"></p>
+    </div>
+
+    <!-- LEADS TABLE -->
+    <div class="bg-white rounded-lg shadow overflow-x-auto">
+      <div class="p-4 border-b">
+        <h2 class="text-lg font-semibold">Leads</h2>
+      </div>
+      <table class="min-w-full">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="py-2 px-4 text-left">Name</th>
+            <th class="py-2 px-4 text-left">Phone</th>
+            <th class="py-2 px-4 text-left">Project</th>
+            <th class="py-2 px-4 text-left">Status</th>
+            <th class="py-2 px-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="leadsTable">
+          <!-- Leads loaded here -->
+        </tbody>
+      </table>
+      <div id="noLeads" class="p-6 text-center text-gray-500">No leads yet. Upload a CSV or Excel file to begin.</div>
+    </div>
+  </div>
+
+  <script>
+    let session = null
+
+    // Check auth on load
+    async function init() {
+      const { data: { session: sess } } = await supabase.auth.getSession()
+      session = sess
+      if (!session) {
+        window.location.href = '/index.html'
+        return
+      }
+      loadLeads()
+    }
+
+    async function logout() {
+      await supabase.auth.signOut()
+      window.location.href = '/index.html'
+    }
+
+    async function loadLeads() {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+
+      const table = document.getElementById('leadsTable')
+      const noLeads = document.getElementById('noLeads')
+
+      if (error || !data || data.length === 0) {
+        noLeads.classList.remove('hidden')
+        table.innerHTML = ''
+      } else {
+        noLeads.classList.add('hidden')
+        table.innerHTML = data.map(lead => `
+          <tr class="border-t hover:bg-gray-50">
+            <td class="py-2 px-4">${lead.name || '—'}</td>
+            <td class="py-2 px-4">${lead.phone || '—'}</td>
+            <td class="py-2 px-4">${lead.project || '—'}</td>
+            <td class="py-2 px-4">
+              <span class="px-2 py-0.5 rounded text-xs ${
+                lead.status === 'booked' ? 'bg-green-100 text-green-800' :
+                lead.status === 'callback' ? 'bg-yellow-100 text-yellow-800' :
+                lead.status === 'not_interested' ? 'bg-gray-100 text-gray-800' :
+                'bg-blue-100 text-blue-800'
+              }">${lead.status || 'pending'}</span>
+            </td>
+            <td class="py-2 px-4">
+              <button
+                onclick="callLead('${lead.phone}', '${lead.id}')"
+                class="text-blue-600 hover:underline text-sm"
+                title="Trigger AI call"
+              >
+                Call
+              </button>
+            </td>
+          </tr>
+        `).join('')
+      }
+    }
+
+    async function uploadFile() {
+        const fileInput = document.getElementById('csvFile');
+        const file = fileInput.files[0];
+        if (!file) return alert('Please select a CSV or Excel file');
+
+        document.getElementById('uploadStatus').innerText = 'Parsing file...';
+        const fileName = file.name.toLowerCase();
+        let leads = [];
+
+        // 1. Get file data
+        const fileData = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+
+            if (fileName.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                reader.readAsBinaryString(file);
+            } else {
+                alert('Unsupported file type. Please use .csv, .xlsx, or .xls');
+                reject(new Error('Unsupported file'));
+            }
+        });
+
+        // 2. Parse the data (CSV or Excel)
+        if (fileName.endsWith('.csv')) {
+            const result = Papa.parse(fileData, { header: true, skipEmptyLines: true });
+            leads = result.data;
+        } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+            const workbook = XLSX.read(fileData, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            leads = XLSX.utils.sheet_to_json(worksheet);
+        }
+
+        if (leads.length === 0) return alert('No valid data found in the file.');
+
+        // 3. Normalize and Insert Data
+        const normalizedLeads = [];
+        const phoneKeys = ['phone', 'mobile', 'ph', 'contact', 'contact_number'];
+        const nameKeys = ['name', 'full_name', 'client_name'];
+
+        for (const rawLead of leads) {
+            let name = '', phone = '', project = rawLead.Project || rawLead.project || 'Default';
+
+            // Find name and phone from common headers (case insensitive)
+            for(const key of Object.keys(rawLead)) {
+                const lowerKey = key.toLowerCase().trim();
+                // Prioritize finding name
+                if (nameKeys.includes(lowerKey) && !name) name = String(rawLead[key]).trim();
+                // Prioritize finding phone
+                if (phoneKeys.includes(lowerKey) && !phone) phone = String(rawLead[key]).trim();
+
+                // If a 'Project' column is found, use it
+                if (lowerKey === 'project') project = String(rawLead[key]).trim();
+            }
+
+            // Final validation (must have name AND a minimum 10-digit phone)
+            if (name && phone && phone.length >= 10) {
+                 normalizedLeads.push({
+                    name: name,
+                    phone: phone.replace(/[^0-9]/g, ''), // Clean phone number (remove spaces, dashes)
+                    project: project,
+                    status: 'pending',
+                    user_id: session.user.id
+                });
+            }
+        }
+
+        if (normalizedLeads.length === 0) {
+            document.getElementById('uploadStatus').innerText = 'No valid leads found with Name and 10-digit Phone/Mobile.';
+            return;
+        }
+
+        // 4. Insert into Supabase
+        const { error } = await supabase.from('leads').insert(normalizedLeads);
+        if (error) {
+            document.getElementById('uploadStatus').innerText = 'Upload failed: ' + error.message;
+        } else {
+            document.getElementById('uploadStatus').innerText = `${normalizedLeads.length} leads uploaded successfully!`;
+            loadLeads();
+        }
+    }
+
+    function callLead(phone, leadId) {
+      if (!confirm(`Call ${phone}? (In real version: triggers Exotel/Twilio)`)) return
+
+      // Later: fetch('YOUR_API_ENDPOINT/call', { method: 'POST', body: JSON.stringify({ leadId }) })
+      alert(`Calling ${phone}... (Integration coming soon)`)
+    }
+
+    // Start app
+    init()
+  </script>
+</body>
+</html>

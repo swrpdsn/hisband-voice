@@ -2,363 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hisband Voice — AI Calling CRM for Real Estate Builders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hisband Voice — AI Calling for SMBs</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="theme-color" content="#000000">
-  <meta name="description" content="Hinglish AI calling for real-estate builders. Upload leads, auto-call, book site visits, send WhatsApp, track results in a simple dashboard.">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Hisband Voice — AI Calling CRM for Builders">
-  <meta property="og:description" content="Book site visits on autopilot with Hinglish AI calls. DLT-ready. Works with Exotel, Airtel IQ, Twilio.">
-  <meta property="og:url" content="https://swrpdsn.github.io/hisband-voice">
-  <meta property="og:image" content="/og-image.jpg">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Hisband Voice — AI Calling CRM for Builders">
-  <meta name="twitter:description" content="Upload leads → AI calls in Hinglish → Confirms visit → WhatsApp map → Simple dashboard.">
-  <meta name="twitter:image" content="/og-image.jpg">
-
-  <link rel="icon" href="/favicon.ico">
 </head>
-<body class="bg-white text-gray-900">
-  <!-- NAV -->
-  <header class="sticky top-0 z-30 border-b bg-white/80 backdrop-blur">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-      <a href="index.html" class="flex items-center gap-2 font-bold">
-        <svg class="h-8 w-8" viewBox="0 0 48 48" aria-hidden="true">
-          <rect x="4" y="4" width="40" height="40" rx="10" fill="#000"/>
-          <text x="24" y="28" text-anchor="middle" font-size="14" fill="#fff" font-family="ui-sans-serif, system-ui">HV</text>
-        </svg>
-        Hisband Voice
-      </a>
-      <div class="hidden items-center gap-2 md:flex">
-        <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
-        <a href="https://wa.me/919920225781" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">WhatsApp</a>
-      </div>
-      <button id="menuBtn" class="md:hidden rounded border px-3 py-1.5 text-sm" aria-label="Toggle menu">Menu</button>
-    </div>
-    <div id="mnav" class="hidden border-t bg-white md:hidden">
-      <div class="mx-auto max-w-7xl px-4 py-3 space-y-2 text-sm">
-        <a href="#" onclick="openLoginModal()" class="block">Log In</a>
-        <a href="https://wa.me/919920225781" class="block rounded bg-black px-3 py-1.5 text-white text-center">WhatsApp</a>
-      </div>
-    </div>
+<body class="bg-white text-gray-800">
+
+  <!-- HEADER -->
+  <header class="p-4 md:p-6 flex justify-between items-center border-b">
+    <div class="text-2xl font-bold">Hisband Voice</div>
+    <nav class="hidden md:flex items-center space-x-6">
+      <a href="#features" class="hover:underline">Features</a>
+      <a href="#faq" class="hover:underline">FAQ</a>
+      <a href="login.html" class="font-semibold">Log In</a>
+    </nav>
+    <a href="signup.html" class="bg-black text-white px-4 py-2 rounded font-semibold">Reserve My Spot</a>
   </header>
 
-  <!-- HERO + WAITLIST -->
-  <section class="border-b bg-gradient-to-b from-gray-50 to-white py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <div class="text-center max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold md:text-4xl">
-          AI Voice Calling for Builders — <span class="text-black">Book Site Visits in Minutes</span>
-        </h1>
-        <p class="mt-3 text-gray-600">
-          Upload leads → AI calls in Hinglish → Confirms visit → Sends WhatsApp map → All in one dashboard.
-        </p>
+  <!-- HERO SECTION -->
+  <main class="max-w-4xl mx-auto text-center py-20 px-4">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">Never Miss a Lead Again</h1>
+    <p class="text-lg md:text-xl text-gray-600 mb-8">Hisband Voice is an AI calling agent that instantly engages your leads, books site visits, and syncs with your calendar, so you can focus on building.</p>
+    <a href="signup.html" class="bg-black text-white px-8 py-3 rounded-full font-bold text-lg">Get Started for Free</a>
+  </main>
 
-        <div class="mt-5 flex items-center justify-center gap-6 text-xs text-gray-600">
-          <div>
-            <div class="font-semibold">“Booked 46 site visits in 3 days!”</div>
-            <div class="flex items-center gap-2 mt-1">
-              <span class="inline-block h-2 w-2 rounded-full bg-green-500"></span>
-              Rajesh Mehta, SkyVilla Mumbai
-            </div>
-          </div>
+  <!-- FEATURES SECTION -->
+  <section id="features" class="py-20 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+      <div class="grid md:grid-cols-3 gap-8 text-center">
+        <div>
+          <h3 class="text-xl font-semibold mb-2">1. Upload Your Leads</h3>
+          <p>Easily upload a CSV or Excel file of your leads. Our system parses and prepares them for calling in seconds.</p>
         </div>
-      </div>
-
-      <!-- WAITLIST FORM -->
-      <div class="mt-10 max-w-lg mx-auto bg-gray-50 rounded-xl border p-6">
-        <h2 class="text-xl font-bold text-center">Get Early Access — Free for First 10 Builders</h2>
-        <p class="mt-2 text-gray-600 text-center text-sm">
-          Join 20+ Mumbai builders already using Hisband Voice. No credit card. Launching next week.
-        </p>
-        <form action="https://formspree.io/f/xgvnargl" method="POST" class="mt-6 space-y-3">
-          <input type="text" name="name" placeholder="Your Name" required 
-                 class="w-full rounded border px-4 py-2" aria-label="Your full name">
-          <input type="email" name="email" placeholder="Work Email" required 
-                 class="w-full rounded border px-4 py-2" aria-label="Work email">
-          <input type="tel" name="phone" placeholder="WhatsApp Number" required 
-                 class="w-full rounded border px-4 py-2" aria-label="WhatsApp number">
-          <input type="text" name="company" placeholder="Builder / Project Name" required 
-                 class="w-full rounded border px-4 py-2" aria-label="Company or project name">
-          <button type="submit" class="w-full rounded bg-black px-4 py-2 text-white">Reserve My Spot →</button>
-          <input type="hidden" name="_next" value="https://swrpdsn.github.io/hisband-voice/thanks.html" />
-        </form>
-        <p class="mt-3 text-xs text-gray-500 text-center">
-          Your data is safe. We never share it. 
-          <a href="/privacy.html" class="underline">Privacy Policy</a>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section class="border-b py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">Everything you need to book site visits</h2>
-      <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Hinglish AI Calling</div>
-          <p class="mt-2 text-sm text-gray-600">Natural Hinglish voice: greet, qualify, offer 2 slots, confirm.</p>
+        <div>
+          <h3 class="text-xl font-semibold mb-2">2. AI Agent Auto-Calls</h3>
+          <p>Our conversational AI agent calls each lead, qualifies them, and answers their basic questions in a natural, human-like voice.</p>
         </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Upload CSV or Auto-capture</div>
-          <p class="mt-2 text-sm text-gray-600">Import Facebook/Google leads or upload CSV in seconds.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">WhatsApp Confirmations</div>
-          <p class="mt-2 text-sm text-gray-600">Auto-send map links & reminders to reduce no-shows.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">DLT-ready, India-first</div>
-          <p class="mt-2 text-sm text-gray-600">Works with Exotel/Airtel IQ/Twilio; respects DND & consent.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Recordings & Transcripts</div>
-          <p class="mt-2 text-sm text-gray-600">Listen, review, and search every call for quality.</p>
-        </div>
-        <div class="rounded-lg border p-5">
-          <div class="text-sm font-semibold">Simple Dashboard</div>
-          <p class="mt-2 text-sm text-gray-600">One screen for calls, outcomes, and booked visits.</p>
+        <div>
+          <h3 class="text-xl font-semibold mb-2">3. Visits Booked & Synced</h3>
+          <p>When a lead is ready, the AI books a site visit directly into your Google Calendar and sends a WhatsApp confirmation.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-  <section class="border-b py-12 bg-gray-50">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">How it works (simple 1–2–3)</h2>
-      <div class="mt-6 grid gap-6 md:grid-cols-3">
-        <div class="rounded-lg border p-5 text-center">
-          <div class="text-sm font-semibold">1) Upload Leads</div>
-          <p class="mt-2 text-sm text-gray-600">CSV import or auto-capture from forms.</p>
-        </div>
-        <div class="rounded-lg border p-5 text-center">
-          <div class="text-sm font-semibold">2) AI Calls in Hinglish</div>
-          <p class="mt-2 text-sm text-gray-600">Qualify, offer 2 slots, confirm visit — automated.</p>
-        </div>
-        <div class="rounded-lg border p-5 text-center">
-          <div class="text-sm font-semibold">3) WhatsApp + Dashboard</div>
-          <p class="mt-2 text-sm text-gray-600">Map links & reminders sent, outcomes tracked.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRICING -->
-  <section class="border-b py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">Simple pricing for SMBs</h2>
-      <p class="mt-2 text-sm text-gray-600 text-center">Minutes included. Add top-ups anytime.</p>
-      <div class="mt-8 grid gap-6 md:grid-cols-3">
-        <div class="rounded-lg border p-6">
-          <div class="text-sm font-semibold">Basic</div>
-          <div class="mt-2 text-3xl font-bold">₹7,000<span class="text-base font-medium text-gray-500">/mo</span></div>
-          <ul class="mt-3 text-sm text-gray-700 space-y-2">
-            <li>✅ 1,000 calling minutes</li>
-            <li>✅ WhatsApp confirmations</li>
-            <li>✅ Real-time dashboard</li>
-          </ul>
-          <p class="mt-2 text-xs text-gray-500">No credit card required. 7-day free trial.</p>
-        </div>
-        <div class="rounded-lg border p-6">
-          <div class="text-sm font-semibold">Growth</div>
-          <div class="mt-2 text-3xl font-bold">₹12,000<span class="text-base font-medium text-gray-500">/mo</span></div>
-          <ul class="mt-3 text-sm text-gray-700 space-y-2">
-            <li>✅ 3,000 minutes</li>
-            <li>✅ Multiple projects</li>
-            <li>✅ Recordings + transcripts</li>
-          </ul>
-          <p class="mt-2 text-xs text-gray-500">No credit card required. 7-day free trial.</p>
-        </div>
-        <div class="rounded-lg border p-6">
-          <div class="text-sm font-semibold">Pro</div>
-          <div class="mt-2 text-3xl font-bold">Custom</div>
-          <ul class="mt-3 text-sm text-gray-700 space-y-2">
-            <li>✅ 10,000+ minutes</li>
-            <li>✅ Advanced routing</li>
-            <li>✅ Priority support</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="py-12">
-    <div class="mx-auto max-w-7xl px-4">
-      <h2 class="text-2xl font-bold text-center">FAQ</h2>
-      <div class="mt-6 max-w-3xl mx-auto space-y-4">
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">Kya Hinglish support karta hai?</summary>
-          <p class="mt-2 text-sm text-gray-600">Haan. Hindi + English mix ke liye optimized call flow aur voices.</p>
+  <!-- FAQ SECTION -->
+  <section id="faq" class="py-20">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        <details class="p-4 border rounded-lg">
+          <summary class="font-semibold cursor-pointer">What languages does the AI support?</summary>
+          <p class="mt-2 text-gray-600">Currently, our AI is optimized for Hinglish (a mix of Hindi and English) to best serve the Indian real estate market. More languages are coming soon.</p>
         </details>
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">DLT compliance?</summary>
-          <p class="mt-2 text-sm text-gray-600">Outbound campaigns DLT-ready. Consent & DND respect built-in.</p>
+        <details class="p-4 border rounded-lg">
+          <summary class="font-semibold cursor-pointer">How do I integrate my calendar?</summary>
+          <p class="mt-2 text-gray-600">During onboarding, you'll be prompted to connect your Google Account. Our system uses the Google Calendar API to find available slots and book appointments automatically.</p>
         </details>
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">Kaise integrate hoga?</summary>
-          <p class="mt-2 text-sm text-gray-600">Exotel/AirtelIQ/Twilio se connect. WhatsApp via Gupshup/Twilio.</p>
-        </details>
-        <details class="rounded-lg border p-4">
-          <summary class="font-semibold cursor-pointer">Pricing kaise kaam karta hai?</summary>
-          <p class="mt-2 text-sm text-gray-600">Monthly subscription + minutes included. Extra minutes = ₹1/min.</p>
+        <details class="p-4 border rounded-lg">
+          <summary class="font-semibold cursor-pointer">What are the costs?</summary>
+          <p class="mt-2 text-gray-600">We offer a free trial to get you started. After that, our pricing is based on the number of calls made per month. Contact us for detailed enterprise plans.</p>
         </details>
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="border-t py-8">
-    <div class="mx-auto max-w-7xl px-4 text-sm text-gray-600">
-      <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div>© <span id="yr"></span> Hisband Voice. All rights reserved.</div>
-        <div class="flex gap-4">
-          <a href="mailto:hello@hisbandhr.ai" class="hover:text-gray-800">Email</a>
-          <a href="https://wa.me/919920225781" class="hover:text-gray-800">WhatsApp</a>
-          <a href="/privacy.html" class="hover:text-gray-800">Privacy</a>
-          <a href="/terms.html" class="hover:text-gray-800">Terms</a>
-        </div>
+  <footer class="border-t py-12">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-600">
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="/terms.html" class="hover:underline">Terms of Service</a>
+        <span>|</span>
+        <a href="/privacy.html" class="hover:underline">Privacy Policy</a>
+        <span>|</span>
+        <a href="mailto:support@hisband.ai" class="hover:underline">Contact Support</a>
       </div>
+      <p>&copy; 2024 Hisband.AI. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- FAQ Schema for SEO -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Kya Hinglish support karta hai?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Haan. Hindi + English mix ke liye optimized call flow aur voices."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "DLT compliance?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Outbound campaigns DLT-ready. Consent & DND respect built-in."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Kaise integrate hoga?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Exotel/AirtelIQ/Twilio se connect. WhatsApp via Gupshup/Twilio."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Pricing kaise kaam karta hai?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Monthly subscription + minutes included. Extra minutes = ₹1/min."
-        }
-      }
-    ]
-  }
-  </script>
-
-  <!-- LOGIN MODAL -->
-  <div id="loginModal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg w-full max-w-md p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold">Log in to Hisband Voice</h3>
-        <button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-700">&times;</button>
-      </div>
-      
-      <input type="email" id="loginEmail" placeholder="Work email" class="w-full rounded border px-3 py-2 mb-3">
-      <input type="password" id="loginPassword" placeholder="Password" class="w-full rounded border px-3 py-2 mb-4">
-      
-      <button onclick="loginFromModal()" class="w-full bg-black text-white py-2 rounded">Log In</button>
-      
-      <p class="mt-3 text-sm text-center">
-        Don’t have an account? 
-        <a href="#" onclick="signupFromModal()" class="text-black font-medium">Sign up</a>
-      </p>
-      
-      <p id="loginMessage" class="mt-2 text-sm text-red-600 text-center"></p>
-    </div>
-  </div>
-
-  <!-- JS -->
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    // Supabase client
-    const supabase = createClient(
-      'https://hsrkrjfcaevsseldoddt.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y'
-    )
-
-    // Mobile menu
-    const btn = document.getElementById('menuBtn')
-    const m = document.getElementById('mnav')
-    btn?.addEventListener('click', () => {
-      m.classList.toggle('hidden')
-    })
-
-    // Year
-    document.getElementById('yr').textContent = new Date().getFullYear()
-
-    // === LOGIN MODAL FUNCTIONS ===
-    function openLoginModal() {
-      document.getElementById('loginModal').classList.remove('hidden')
-    }
-    function closeLoginModal() {
-      document.getElementById('loginModal').classList.add('hidden')
-    }
-
-    async function loginFromModal() {
-      const email = document.getElementById('loginEmail').value
-      const password = document.getElementById('loginPassword').value
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      
-      if (error) {
-        document.getElementById('loginMessage').innerText = error.message
-      } else {
-        window.location.href = '/dashboard.html'
-      }
-    }
-
-    async function signupFromModal() {
-      const email = document.getElementById('loginEmail').value
-      const password = document.getElementById('loginPassword').value
-      const { error } = await supabase.auth.signUp({ email, password })
-      
-      if (error) {
-        document.getElementById('loginMessage').innerText = error.message
-      } else {
-        alert('Account created! Redirecting to dashboard...')
-        window.location.href = '/dashboard.html'
-      }
-    }
-
-    // Close modal on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeLoginModal()
-    })
-
-    // Auto-redirect if already logged in
-    async function checkAuthAndRedirect() {
-      const {  { session } } = await supabase.auth.getSession()
-      if (session) {
-        window.location.href = '/dashboard.html'
-      }
-    }
-    checkAuthAndRedirect()
-  </script>
 </body>
 </html>
