@@ -107,7 +107,23 @@
         <button type="submit" class="w-full bg-black text-white p-2 rounded">Log In</button>
       </form>
       <p id="login-message" class="mt-4 text-center text-red-500"></p>
+      <div class="text-sm text-center">
+        <a href="#" id="forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500"> Forgot your password? </a>
+      </div>
       <button id="close-login-modal" class="mt-4 w-full text-center hover:underline">Close</button>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgot-password-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Reset Your Password</h2>
+      <form id="forgot-password-form">
+        <input type="email" id="forgot-email" placeholder="Enter your email" required class="w-full p-2 border rounded mb-4"/>
+        <button type="submit" class="w-full bg-black text-white p-2 rounded">Send Reset Link</button>
+      </form>
+      <p id="forgot-message" class="mt-4 text-center text-red-500"></p>
+      <button id="close-forgot-modal" class="mt-4 w-full text-center hover:underline">Close</button>
     </div>
   </div>
 
@@ -117,11 +133,17 @@
     // Modal Handling
     const signupModal = document.getElementById('signup-modal');
     const loginModal = document.getElementById('login-modal');
+    const forgotPasswordModal = document.getElementById('forgot-password-modal');
 
     const openSignupModal = () => signupModal.style.display = 'flex';
     const closeSignupModal = () => signupModal.style.display = 'none';
     const openLoginModal = () => loginModal.style.display = 'flex';
     const closeLoginModal = () => loginModal.style.display = 'none';
+    const openForgotPasswordModal = () => {
+        closeLoginModal();
+        forgotPasswordModal.style.display = 'flex';
+    }
+    const closeForgotPasswordModal = () => forgotPasswordModal.style.display = 'none';
 
     document.getElementById('signup-btn').onclick = openSignupModal;
     document.getElementById('signup-btn-hero').onclick = openSignupModal;
@@ -129,18 +151,23 @@
 
     document.getElementById('login-btn').onclick = openLoginModal;
     document.getElementById('close-login-modal').onclick = closeLoginModal;
+    document.getElementById('forgot-password-link').onclick = openForgotPasswordModal;
+    document.getElementById('close-forgot-modal').onclick = closeForgotPasswordModal;
 
     // Close modals if clicking outside the content
     window.onclick = function(event) {
       if (event.target == signupModal) closeSignupModal();
       if (event.target == loginModal) closeLoginModal();
+      if (event.target == forgotPasswordModal) closeForgotPasswordModal();
     }
 
     // Auth Logic
     const signupForm = document.getElementById('signup-form');
     const loginForm = document.getElementById('login-form');
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
     const signupMessage = document.getElementById('signup-message');
     const loginMessage = document.getElementById('login-message');
+    const forgotMessage = document.getElementById('forgot-message');
 
     signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -174,6 +201,24 @@
       } else {
         window.location.href = 'dashboard.html';
       }
+    });
+
+    forgotPasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgot-email').value;
+        // IMPORTANT: For this to work, you must add the following URL to your Supabase project's
+        // "URL Configuration -> Redirect URLs" allow list:
+        // [YOUR_SITE_URL]/update-password.html
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/update-password.html',
+        });
+
+        if (error) {
+            forgotMessage.textContent = error.message;
+        } else {
+            forgotMessage.textContent = 'Password reset link sent! Please check your email.';
+            forgotMessage.className = 'mt-4 text-center text-green-500';
+        }
     });
   </script>
 </body>

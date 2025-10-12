@@ -94,20 +94,31 @@
             <td class="py-2 px-4">${lead.phone || '—'}</td>
             <td class="py-2 px-4">${lead.project || '—'}</td>
             <td class="py-2 px-4">
-              <span class="px-2 py-0.5 rounded text-xs ${
-                lead.status === 'booked' ? 'bg-green-100 text-green-800' :
-                lead.status === 'callback' ? 'bg-yellow-100 text-yellow-800' :
-                lead.status === 'not_interested' ? 'bg-gray-100 text-gray-800' :
-                'bg-blue-100 text-blue-800'
-              }">${lead.status || 'pending'}</span>
+              <select
+                onchange="updateLeadStatus('${lead.id}', this.value)"
+                class="px-2 py-0.5 rounded text-xs border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="pending" ${lead.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="called" ${lead.status === 'called' ? 'selected' : ''}>Called</option>
+                <option value="booked" ${lead.status === 'booked' ? 'selected' : ''}>Booked</option>
+                <option value="callback" ${lead.status === 'callback' ? 'selected' : ''}>Callback</option>
+                <option value="not_interested" ${lead.status === 'not_interested' ? 'selected' : ''}>Not Interested</option>
+              </select>
             </td>
-            <td class="py-2 px-4">
+            <td class="py-2 px-4 space-x-2">
               <button
                 onclick="callLead('${lead.phone}', '${lead.id}')"
                 class="text-blue-600 hover:underline text-sm"
                 title="Trigger AI call"
               >
-                Call
+                📞 Call
+              </button>
+              <button
+                onclick="deleteLead('${lead.id}', '${lead.name}')"
+                class="text-red-600 hover:underline text-sm"
+                title="Delete lead"
+              >
+                🗑️ Delete
               </button>
             </td>
           </tr>
@@ -207,8 +218,41 @@
       alert(`Calling ${phone}... (Integration coming soon)`)
     }
 
+    async function deleteLead(leadId, leadName) {
+      if (!confirm(`Are you sure you want to delete lead: ${leadName}?`)) return;
+
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId)
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        alert('Error deleting lead: ' + error.message);
+      } else {
+        // Refresh the leads table
+        loadLeads();
+      }
+    }
+
+    async function updateLeadStatus(leadId, newStatus) {
+      const { error } = await supabase
+        .from('leads')
+        .update({ status: newStatus })
+        .eq('id', leadId)
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        alert('Error updating status: ' + error.message);
+        // Optional: reload to revert the visual change if the update fails
+        loadLeads();
+      }
+      // No need to call loadLeads() on success, as the UI is already visually updated.
+      // You could add a success message if desired.
+    }
+
     // Start app
-    init()
+    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
