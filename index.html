@@ -37,6 +37,7 @@
       <div class="hidden items-center gap-2 md:flex">
         <!-- Dynamic buttons will load here (Log In / Go to Dashboard) -->
         <div id="auth-nav-container" class="flex items-center gap-2">
+            <!-- Initial Login button -->
             <a href="#" onclick="openLoginModal()" class="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">Log In</a>
         </div>
         <a href="https://wa.me/919920225781" class="rounded bg-black px-3 py-1.5 text-sm text-white hover:bg-black/90">WhatsApp</a>
@@ -99,7 +100,7 @@
     </div>
   </section>
 
-  <!-- FEATURES (Rest of the marketing site is perfect and should be kept as is) -->
+  <!-- FEATURES -->
   <section class="border-b py-12">
     <div class="mx-auto max-w-7xl px-4">
       <h2 class="text-2xl font-bold text-center">Everything you need to book site visits</h2>
@@ -476,8 +477,5 @@
     // Run everything ONLY when the page is fully ready
     window.addEventListener('DOMContentLoaded', init);
   </script>
-
-  <!-- IMPORTANT: The actual marketing content is below the JS block, in the body -->
-
 </body>
 </html>
