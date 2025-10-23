@@ -1,29 +1,52 @@
 # Hisband Voice (by HisbandHR.AI)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Hinglish AI Calling MVP for SMBs (builders first, later recruiters/clinics).  
-**Upload leads → Auto-call → Book site visits → WhatsApp confirm → Track in dashboard.**
+**Hinglish AI Calling MVP for SMBs** (builders first, later recruiters/clinics).
 
----
+## Overview
+Hisband Voice is an AI-powered calling platform that combines a Next.js frontend with a Python FastAPI backend to automate lead management and calling workflows.
 
-## 🚀 What’s inside (MVP stack)
-- **API:** FastAPI (Python 3.11) – `/health`, `/ask` demo
-- **Web:** Next.js (React 18) – basic dashboard page
-- **Dev Env:** GitHub **Codespaces** (browser-based IDE)
-- **Runtime (optional):** Docker Compose (api + web; DB/Redis add later)
-- **Config:** `.env` for keys (OpenAI etc.)
+## Features
+- 📤 Upload leads → Auto-call → Book site visits
+- 💬 WhatsApp confirm → Track in dashboard
+- 🚀 Powered by Nari.ai/Exotel for intelligent calling
+- 🎯 Built for SMBs, recruiters, and clinics
 
-> Goal: Get a working dev environment in **Codespaces in minutes**, then plug telephony/ASR/TTS later.
+## Tech Stack
+- **Frontend**: Next.js, React
+- **Backend**: Python, FastAPI
+- **AI**: Nari.ai integration
+- **Telephony**: Exotel API
 
----
+## Quick Start
 
-## ✅ Quick Start (GitHub Codespaces)
-
-1) **Open in Codespaces**
-   - GitHub → your repo → **Code** ➜ **Create codespace on main**
-
-2) **Create env file**
+### GitHub Codespaces (Recommended)
+1. Click "Code" → "Codespaces" → "Create codespace on main"
+2. Install dependencies:
    ```bash
-   cp .env.example .env
-   # Open .env and paste your real keys (at minimum OPENAI_API_KEY)
-# hisband-voice
+   npm install
+   cd api && pip install -r requirements.txt
+   ```
+3. Run development servers:
+   ```bash
+   npm run dev  # Frontend on port 3000
+   cd api && python main.py  # Backend API
+   ```
+
+### Local Setup
+1. Clone the repository
+2. Install Node.js dependencies: `npm install`
+3. Install Python dependencies: `cd api && pip install -r requirements.txt`
+4. Run both servers as shown above
+
+## Project Structure
+```
+/
+├── api/              # Python FastAPI backend
+│   ├── main.py       # Main API server
+│   └── requirements.txt
+├── index.html        # Frontend entry point
+└── README.md         # This file
+```
+
+## License
+See LICENSE file for details.
