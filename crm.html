@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hisband Voice CRM</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#14171c;--mute:#667085;--line:#e4e7ec;--brand:#1f4fd8;--brand2:#e8eeff;--ok:#12805c;--okbg:#e7f6ef;--warn:#b54708;--warnbg:#fef3e6;--bad:#b42318;--badbg:#fdecea;--chip:#f0f2f5;--side:#0f172a}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button{font:inherit;border:0;border-radius:8px;padding:9px 14px;cursor:pointer;font-weight:600;background:var(--chip);color:var(--ink)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.primary{background:var(--brand);color:#fff}button.ok{background:var(--ok);color:#fff}button.danger{background:var(--badbg);color:var(--bad)}button.sm{padding:5px 10px;font-size:12px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+textarea{min-height:90px}
+label{font-size:12px;color:var(--mute);font-weight:600;display:block;margin-bottom:4px}
+a{color:var(--brand)}
+a.btn{display:inline-block;text-decoration:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;background:var(--chip);color:var(--ink)}
+h2{margin:0 0 4px;font-size:20px}h3{margin:0 0 10px;font-size:15px}
+.mute{color:var(--mute);font-size:12px}.hidden{display:none!important}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#0f172a,#1f4fd8)}
+.lbox{background:var(--card);border-radius:16px;padding:28px;width:min(400px,100%);box-shadow:0 20px 60px #0005}
+.lbox h1{margin:0 0 4px;font-size:22px}.f{margin-top:14px}
+.err{color:var(--bad);font-size:13px;margin-top:10px;min-height:18px}
+#app{display:flex;min-height:100vh}
+aside{width:220px;background:var(--side);color:#cbd5e1;padding:16px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;flex:none}
+aside .logo{color:#fff;font-weight:700;font-size:16px;padding:6px 10px 2px}
+aside .who{font-size:12px;padding:0 10px 14px;color:#94a3b8;word-break:break-word}
+aside button{background:transparent;color:#cbd5e1;text-align:left;font-weight:500;white-space:nowrap}
+aside button.on{background:#1e293b;color:#fff;font-weight:600}
+#nav{display:flex;flex-direction:column;gap:4px}
+.sp{flex:1}
+.mainc{flex:1;min-width:0}
+#main{padding:22px;max-width:1300px}
+.banner{padding:10px 22px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.banner.imp{background:var(--warnbg);color:var(--warn)}.banner.info{background:var(--brand2);color:var(--brand)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi b{display:block;font-size:22px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.bar input,.bar select{width:auto;min-width:130px;flex:1;max-width:240px}
+.bar .grow{flex:1}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);background:#fafbfc}
+td.wrap{white-space:normal;min-width:180px}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;background:var(--chip)}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.warn{background:var(--warnbg);color:var(--warn)}.tag.bad{background:var(--badbg);color:var(--bad)}.tag.info{background:var(--brand2);color:var(--brand)}
+.empty{padding:34px;text-align:center;color:var(--mute)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .full{grid-column:1/-1}
+#modal{position:fixed;inset:0;background:#0007;display:grid;place-items:center;padding:14px;z-index:50}
+.mbox{background:var(--card);border-radius:14px;padding:20px;width:min(620px,100%);max-height:92vh;overflow:auto}
+.mact{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#14171c;color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:90vw;font-size:13px}
+#toast.bad{background:var(--bad)}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:28px;text-align:center;background:var(--card)}
+.steps{margin:8px 0 0;padding-left:18px;line-height:1.7}
+code{background:var(--chip);padding:1px 5px;border-radius:5px;font-size:12px;word-break:break-all}
+.tabs{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}.tabs button.on{background:var(--brand);color:#fff}
+#qbar{position:sticky;top:0;z-index:5}
+@media(max-width:820px){#app{flex-direction:column}aside{width:100%;height:auto;position:static;padding:10px}#nav{flex-direction:row;overflow-x:auto}.sp{display:none}aside .who{padding-bottom:6px}#main{padding:14px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="lbox" id="loginForm">
+    <h1>📞 Hisband Voice</h1>
+    <div class="mute">AI Calling CRM · by HisbandHR.AI</div>
+    <div class="f"><label>Login ID</label><input id="lu" required autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username"></div>
+    <div class="f"><label>Password</label><div style="display:flex;gap:6px"><input id="lp" type="password" required autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="current-password"><button type="button" id="lshow">Show</button></div></div>
+    <div class="err" id="lerr"></div>
+    <button class="primary" style="width:100%" id="lbtn">Log in</button>
+    <div class="mute" style="margin-top:14px">Forgot your password? Ask Hisband Voice support to reset it.</div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <aside>
+    <div class="logo">📞 Hisband Voice</div>
+    <div class="who" id="who"></div>
+    <div id="nav"></div>
+    <div class="sp"></div>
+    <button data-act="logout">⎋ Log out</button>
+  </aside>
+  <div class="mainc">
+    <div id="banners"></div>
+    <div id="qbar"></div>
+    <div id="main"></div>
+  </div>
+</div>
+<div id="modal" class="hidden"></div>
+<div id="toast" class="hidden"></div>
+
+<script>
+"use strict";
+const SB_URL="https://hsrkrjfcaevsseldoddt.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzcmtyamZjYWV2c3NlbGRvZGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzQxMzksImV4cCI6MjA3NDY1MDEzOX0.c44_PL8XF3B6mSoJSx4QLknoAno89mcIyw0miGdMb9Y";
+const DOMAIN="crm.hisbandhr.ai";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const STATUSES=["New","No answer","Call back","Interested","Site visit booked","Visited","Negotiation","Booked","Not interested","Fake / wrong number"];
+const CLOSED=["Site visit booked","Visited","Negotiation","Booked","Not interested","Fake / wrong number"];
+const S={me:null,clients:[],plans:[],profiles:[],leads:[],calls:[],uploads:[],settings:{calling_hours_start:9,calling_hours_end:21,max_attempts:3,calling_enabled:true},asClient:null,page:"",sel:null,tab:"leads",f:{},lim:200,draw:null,queue:null};
+const P={},A={};
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toEmail=u=>{u=String(u).trim().toLowerCase();return u.includes("@")?u:`${u}@${DOMAIN}`};
+const dt=v=>v?new Date(v).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"–";
+const d0=v=>v?new Date(v).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}):"–";
+const dur=s=>s?`${Math.floor(s/60)}m ${s%60}s`:"–";
+const rs=n=>"₹"+Number(n||0).toLocaleString("en-IN");
+let toastT;function toast(m,bad){const t=$("toast");t.textContent=m;t.className=bad?"bad":"";clearTimeout(toastT);toastT=setTimeout(()=>t.className="hidden",bad?6000:3000)}
+async function q(builder){const {data,error}=await builder;if(error)throw new Error(error.message);return data}
+async function fn(name,body){const {data,error}=await sb.functions.invoke(name,{body});
+  if(error){let b=null;try{b=await error.context.json()}catch(_){}const e=new Error(b?.error||error.message);e.code=b?.code;throw e}
+  if(data&&data.ok===false){const e=new Error(data.error||"Failed");e.code=data.code;throw e}return data}
+async function all(table){let out=[],from=0;for(;;){const data=await q(sb.from(table).select("*").order("created_at",{ascending:false}).range(from,from+999));out=out.concat(data);if(data.length<1000)break;from+=1000}return out}
+const isAdmin=()=>S.me?.role==="superadmin";
+const adminMode=()=>isAdmin()&&!S.asClient;
+const cid=()=>isAdmin()?S.asClient:S.me.client_id;
+const client=id=>S.clients.find(c=>c.id===(id||cid()));
+const plan=c=>S.plans.find(p=>p.id===c?.plan_id);
+const cname=id=>client(id)?.company||"–";
+const monthStart=()=>{const d=new Date();d.setUTCDate(1);d.setUTCHours(0,0,0,0);return d.toISOString()};
+const minutesUsed=id=>{const m=monthStart();return Math.ceil(S.calls.filter(c=>c.client_id===id&&c.created_at>=m).reduce((s,c)=>s+(c.duration||0),0)/60)};
+function verdict(l,c){if(l.status==="Fake / wrong number")return["Rejected","bad"];if(l.budget==null||!c)return["No budget","chip"];const b=+l.budget;
+  if(b>=+c.budget_cutoff)return["Qualified","ok"];if(b>=c.budget_cutoff-c.budget_stretch)return["Stretch","warn"];return["Rejected","bad"]}
+function callable(l){const c=client(l.client_id);return verdict(l,c)[0]!=="Rejected"&&!CLOSED.includes(l.status)&&(l.attempts||0)<(S.settings.max_attempts||3)}
+function lastCalls(){const m={};for(const c of S.calls){if(c.lead_id&&!m[c.lead_id])m[c.lead_id]=c}return m}
+const stTag=s=>`<span class="tag ${["Site visit booked","Visited","Booked","Interested","Negotiation"].includes(s)?"ok":["Not interested","Fake / wrong number"].includes(s)?"bad":["No answer","Call back"].includes(s)?"warn":"info"}">${esc(s)}</span>`;
+function table(cols,rows,empty){if(!rows.length)return`<div class="tw"><div class="empty">${empty||"Nothing here yet."}</div></div>`;
+  const shown=rows.slice(0,S.lim);
+  return`<div class="tw"><table><thead><tr>${cols.map(c=>`<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${shown.map(r=>`<tr>${cols.map(c=>`<td${c[2]?` class="${c[2]}"`:""}>${c[1](r)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+  <div class="mute" style="margin-top:8px">Showing ${shown.length} of ${rows.length}${rows.length>shown.length?` · <a href="#" data-act="more">Show more</a>`:""}</div>`}
+A.more=()=>{S.lim+=500;S.draw&&S.draw()};
+function xlsx(name,rows){if(!rows.length)return toast("Nothing to export",true);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),"Data");XLSX.writeFile(wb,name)}
+function fv(k,d=""){return S.f[k]??d}
+const opt=(arr,sel,all)=>(all?`<option value="">${all}</option>`:"")+arr.map(o=>{const[v,t]=Array.isArray(o)?o:[o,o];return`<option value="${esc(v)}"${String(v)===String(sel)?" selected":""}>${esc(t)}</option>`}).join("");
+
+/* ---------- modal ---------- */
+function closeModal(){$("modal").className="hidden";$("modal").innerHTML=""}
+A.close=closeModal;
+function formModal(title,body,onSubmit,opts={}){const m=$("modal");
+  m.innerHTML=`<form class="mbox"><h3>${title}</h3><div class="grid">${body}</div><div class="err" id="merr"></div><div class="mact">${opts.extra||""}${opts.locked?"":`<button type="button" data-act="close">Cancel</button>`}<button class="primary" id="msub">${opts.ok||"Save"}</button></div></form>`;
+  m.className="";
+  m.querySelector("form").onsubmit=async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target).entries());const b=$("msub");b.disabled=true;$("merr").textContent="";
+    try{await onSubmit(f);}catch(er){if($("merr"))$("merr").textContent=er.message||String(er)}finally{if($("msub"))$("msub").disabled=false}}}
+function confirmModal(text,okLabel,onOk){formModal("Please confirm",`<div class="full">${text}</div>`,async()=>{await onOk();closeModal()},{ok:okLabel})}
+
+/* ---------- auth ---------- */
+$("lshow").onclick=()=>{const i=$("lp");i.type=i.type==="password"?"text":"password";$("lshow").textContent=i.type==="password"?"Show":"Hide"};
+$("loginForm").onsubmit=async e=>{e.preventDefault();$("lerr").textContent="";$("lbtn").disabled=true;
+  try{const {error}=await sb.auth.signInWithPassword({email:toEmail($("lu").value),password:$("lp").value});
+    if(error)throw new Error(error.message==="Invalid login credentials"?"Wrong login ID or password. Passwords are case-sensitive.":error.message);
+    await start()}
+  catch(er){$("lerr").textContent=er.message}finally{$("lbtn").disabled=false}};
+A.logout=async()=>{stopQueue();qbar("");closeModal();await sb.auth.signOut();S.me=null;S.asClient=null;$("app").className="hidden";$("login").className="";$("lp").value=""};
+async function start(){const {data:{session}}=await sb.auth.getSession();if(!session)return;
+  const me=await q(sb.from("profiles").select("*").eq("id",session.user.id).maybeSingle());
+  if(!me){await sb.auth.signOut();throw new Error("This account has no CRM access. Contact Hisband Voice support.")}
+  S.me=me;await loadAll();
+  if(me.role==="client"){const c=client();if(!c){await sb.auth.signOut();throw new Error("Your company record is missing. Contact Hisband Voice support.")}
+    if(c.status==="Suspended"){await sb.auth.signOut();throw new Error("This account is suspended. Contact Hisband Voice support.")}}
+  $("login").className="hidden";$("app").className="";route("dash");
+  if(me.must_change_password)pwModal(true)}
+function pwModal(forced){formModal(forced?"Set your own password":"Change password",
+  `${forced?`<div class="full mute">You are using a temporary password. Choose a new one to continue.</div>`:""}
+   <div class="full"><label>New password (min 8 characters)</label><input name="p1" type="password" required minlength="8" autocomplete="new-password"></div>
+   <div class="full"><label>Repeat new password</label><input name="p2" type="password" required minlength="8" autocomplete="new-password"></div>`,
+  async f=>{if(f.p1!==f.p2)throw new Error("The two passwords do not match");
+    const {error}=await sb.auth.updateUser({password:f.p1});if(error)throw new Error(error.message);
+    await q(sb.rpc("password_changed"));S.me.must_change_password=false;closeModal();toast("Password changed")},{locked:forced,ok:"Save password"})}
+A.pw=()=>pwModal(false);
+
+/* ---------- data ---------- */
+async function loadAll(){const [clients,plans,leads,calls,uploads,profiles,settings]=await Promise.all([all("clients"),all("plans"),all("leads"),all("calls"),all("uploads"),
+    isAdmin()?all("profiles"):Promise.resolve([S.me]),q(sb.from("app_settings").select("*").eq("id",1).maybeSingle())]);
+  Object.assign(S,{clients,plans:plans.sort((a,b)=>a.price-b.price),leads,calls,uploads,profiles});if(settings)S.settings=settings}
+A.refresh=async()=>{await loadAll();route(S.page,true);toast("Refreshed")};
+
+/* ---------- shell ---------- */
+const NAV_ADMIN=[["dash","📊 Dashboard"],["clients","🏢 Clients"],["leads","👥 All leads"],["calls","📞 All calls"],["plans","💳 Plans"],["calling","☎ Calling setup"],["account","🔑 My account"]];
+const NAV_CLIENT=[["dash","📊 Dashboard"],["upload","⬆ Upload list"],["leads","👥 Leads"],["calls","📞 Call results"],["visits","📅 Site visits"],["settings","⚙ Settings"],["account","🔑 My account"]];
+function route(page,keep){if(!keep){S.f={};S.lim=200}S.page=page;S.draw=null;
+  const nav=adminMode()?NAV_ADMIN:NAV_CLIENT.filter(n=>!(S.asClient&&n[0]==="account"));
+  $("who").textContent=adminMode()?`Super admin · ${S.me.name||S.me.username}`:`${cname()} · ${isAdmin()?"viewed by super admin":S.me.name||S.me.username}`;
+  $("nav").innerHTML=nav.map(n=>`<button data-act="go" data-id="${n[0]}" class="${n[0]===page||(page==="client"&&n[0]==="clients")?"on":""}">${n[1]}</button>`).join("");
+  $("banners").innerHTML=S.asClient?`<div class="banner imp">👁 You are viewing <b>${esc(cname())}</b>'s CRM as super admin. <button class="sm" data-act="exitClient">← Back to super admin</button></div>`:"";
+  Promise.resolve().then(()=>(adminMode()?P["a_"+page]:P["c_"+page])()).catch(er=>toast(er.message||String(er),true));window.scrollTo(0,0)}
+A.go=id=>route(id);
+A.exitClient=()=>{stopQueue();const id=S.asClient;S.asClient=null;S.sel=id;route("client")};
+const main=h=>$("main").innerHTML=h;
+document.addEventListener("click",e=>{const el=e.target.closest("[data-act]");if(!el)return;const f=A[el.dataset.act];if(!f)return;if(!el.dataset.pass)e.preventDefault();
+  Promise.resolve().then(()=>f(el.dataset.id,el)).catch(er=>toast(er.message||String(er),true))});
+document.addEventListener("input",e=>{const k=e.target.dataset?.f;if(!k)return;S.f[k]=e.target.value;S.lim=200;S.draw&&S.draw()});
+
+/* =====================================================================
+   SUPER ADMIN MODULE
+   ===================================================================== */
+function clientStats(c){const L=S.leads.filter(l=>l.client_id===c.id),C=S.calls.filter(x=>x.client_id===c.id),U=S.uploads.filter(u=>u.client_id===c.id);
+  return{leads:L.length,called:L.filter(l=>(l.attempts||0)>0).length,calls:C.length,answered:C.filter(x=>x.status==="completed").length,
+    visits:L.filter(l=>["Site visit booked","Visited","Booked"].includes(l.status)).length,min:minutesUsed(c.id),lastUpload:U[0]?.created_at}}
+P.a_dash=()=>{const act=S.clients.filter(c=>c.status==="Active").length,today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
+  const callsToday=S.calls.filter(c=>new Date(c.created_at).toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"})===today).length;
+  const ans=S.calls.filter(c=>c.status==="completed").length,rev=S.clients.filter(c=>c.status==="Active").reduce((s,c)=>s+(plan(c)?.price||0),0);
+  main(`<div class="bar" style="margin-top:0"><h2 class="grow">Super admin dashboard</h2><button data-act="refresh">↻ Refresh</button></div>
+  <div class="kpis"><div class="kpi">Clients<b>${S.clients.length}</b><span class="mute">${act} active</span></div><div class="kpi">Monthly revenue<b>${rs(rev)}</b><span class="mute">active plans</span></div>
+  <div class="kpi">Total leads<b>${S.leads.length}</b></div><div class="kpi">Total calls<b>${S.calls.length}</b><span class="mute">${callsToday} today</span></div>
+  <div class="kpi">Answered<b>${S.calls.length?Math.round(ans*100/S.calls.length):0}%</b><span class="mute">${ans} calls</span></div>
+  <div class="kpi">Site visits<b>${S.leads.filter(l=>["Site visit booked","Visited","Booked"].includes(l.status)).length}</b></div></div>
+  <h3 style="margin-top:20px">Client-wise summary</h3>${clientTable()}`)};
+function clientTable(){return table([["Client",c=>`<a href="#" data-act="openClient" data-id="${c.id}"><b>${esc(c.company)}</b></a>`],["Status",c=>`<span class="tag ${c.status==="Active"?"ok":c.status==="Suspended"?"bad":"warn"}">${c.status}</span>`],
+  ["Plan",c=>esc(plan(c)?.name||"–")],["Leads",c=>clientStats(c).leads],["Leads called",c=>clientStats(c).called],["Calls",c=>clientStats(c).calls],["Answered",c=>clientStats(c).answered],
+  ["Site visits",c=>clientStats(c).visits],["Minutes (month)",c=>`${clientStats(c).min} / ${plan(c)?.minute_limit??"∞"}`],["Last upload",c=>dt(clientStats(c).lastUpload)],
+  ["",c=>`<button class="sm" data-act="openClient" data-id="${c.id}">Details</button>`]],S.clients,`No clients yet. Go to <b>Clients → Add client</b> to create the first one.`)}
+P.a_clients=()=>{main(`<div class="bar" style="margin-top:0"><h2 class="grow">Clients</h2><button class="primary" data-act="editClient">+ Add client</button></div>
+  <div class="mute">Each client gets its own login and sees only its own leads and calls.</div><div style="margin-top:14px">${clientTable()}</div>`)};
+A.openClient=id=>{S.sel=id;S.tab="leads";route("client")};
+A.tab=id=>{S.tab=id;route("client",true)};
+A.asClient=id=>{S.asClient=id;route("dash")};
+P.a_client=()=>{const c=client(S.sel);if(!c)return route("clients");const st=clientStats(c),u=S.profiles.find(p=>p.client_id===c.id),pl=plan(c);
+  const L=S.leads.filter(l=>l.client_id===c.id),C=S.calls.filter(x=>x.client_id===c.id),U=S.uploads.filter(x=>x.client_id===c.id);
+  main(`<div class="bar" style="margin-top:0"><button class="sm" data-act="go" data-id="clients">← Clients</button><h2 class="grow">${esc(c.company)}</h2>
+    <button data-act="editClient" data-id="${c.id}">✎ Edit / login</button><button class="primary" data-act="asClient" data-id="${c.id}">Open client CRM →</button></div>
+  <div class="card" style="margin-top:0"><div class="grid">
+    <div><span class="mute">Contact</span><br>${esc(c.contact||"–")} · ${esc(c.phone||"–")}</div><div><span class="mute">Email / city</span><br>${esc(c.email||"–")} · ${esc(c.city||"–")}</div>
+    <div><span class="mute">Plan</span><br>${pl?`${esc(pl.name)} · ${rs(pl.price)}/month · ${pl.lead_limit} leads · ${pl.minute_limit} min`:"No plan"}</div>
+    <div><span class="mute">Login ID</span><br>${u?`<code>${esc(u.username)}</code>${u.must_change_password?` <span class="tag warn">temporary password not changed yet</span>`:""}`:`<span class="tag bad">no login</span>`} · Status ${c.status}</div></div></div>
+  <div class="kpis"><div class="kpi">Leads<b>${st.leads}</b></div><div class="kpi">Leads called<b>${st.called}</b></div><div class="kpi">Calls<b>${st.calls}</b></div><div class="kpi">Answered<b>${st.answered}</b></div>
+    <div class="kpi">Site visits<b>${st.visits}</b></div><div class="kpi">Minutes this month<b>${st.min}</b><span class="mute">of ${pl?.minute_limit??"∞"}</span></div></div>
+  <div class="tabs">${[["leads",`Leads (${L.length})`],["calls",`Calls (${C.length})`],["uploads",`Uploads (${U.length})`]].map(t=>`<button data-act="tab" data-id="${t[0]}" class="${S.tab===t[0]?"on":""}">${t[1]}</button>`).join("")}
+    <span class="sp"></span><button data-act="exportClient" data-id="${c.id}">⬇ Export Excel</button></div>
+  <div style="margin-top:12px">${S.tab==="leads"?table(leadCols(false,false),L,"This client has not uploaded any leads yet."):S.tab==="calls"?table(callCols(false),C,"No calls yet."):table(uploadCols(),U,"No uploads yet.")}</div>`)};
+A.exportClient=id=>{const c=client(id);if(S.tab==="calls")xlsx(`${c.company}-calls.xlsx`,callRows(S.calls.filter(x=>x.client_id===id)));else xlsx(`${c.company}-leads.xlsx`,leadRows(S.leads.filter(l=>l.client_id===id)))};
+const genPw=()=>{const a="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789",r=crypto.getRandomValues(new Uint32Array(10));return Array.from(r,x=>a[x%a.length]).join("")};
+A.genPw=()=>{const i=document.querySelector("#modal [name=password]");i.value=genPw();i.type="text"};
+A.editClient=id=>{const c=id?client(id):{status:"Active",plan_id:S.plans[0]?.id},u=id?S.profiles.find(p=>p.client_id===id):null;
+  formModal(id?"Edit client":"Add client",`
+  <div class="full"><label>Company name *</label><input name="company" required value="${esc(c.company||"")}"></div>
+  <div><label>Contact person</label><input name="contact" value="${esc(c.contact||"")}"></div><div><label>Phone</label><input name="phone" value="${esc(c.phone||"")}"></div>
+  <div><label>Email</label><input name="email" type="email" value="${esc(c.email||"")}"></div><div><label>City</label><input name="city" value="${esc(c.city||"")}"></div>
+  <div><label>Plan</label><select name="plan_id">${opt(S.plans.map(p=>[p.id,`${p.name} · ${rs(p.price)}`]),c.plan_id)}</select></div>
+  <div><label>Status</label><select name="status">${opt(["Trial","Active","Suspended"],c.status)}</select></div>
+  <div><label>Login ID *</label><input name="username" required pattern="[A-Za-z0-9._\\-]{3,}" title="3 or more letters/numbers, no spaces" autocapitalize="none" value="${esc(u?.username||"")}"></div>
+  <div><label>${u?"New password (blank = keep)":"Temporary password * (min 8)"}</label><div style="display:flex;gap:6px"><input name="password" ${u?"":"required"} minlength="8" autocomplete="off"><button type="button" class="sm" data-act="genPw">Generate</button></div></div>
+  <div class="full mute">Give the login ID and temporary password to the client. They must set their own password at first login.</div>`,
+  async f=>{const row={company:f.company.trim(),contact:f.contact,phone:f.phone,email:f.email,city:f.city,plan_id:f.plan_id||null,status:f.status},un=f.username.trim().toLowerCase();
+    if(id){await q(sb.from("clients").update(row).eq("id",id));
+      if(u){if(un!==u.username)await fn("admin-users",{action:"set_username",user_id:u.id,username:un});if(f.password)await fn("admin-users",{action:"set_password",user_id:u.id,password:f.password})}
+      else await fn("admin-users",{action:"create",username:un,password:f.password,client_id:id,name:f.contact||f.company})}
+    else{const nc=await q(sb.from("clients").insert(row).select().single());
+      try{await fn("admin-users",{action:"create",username:un,password:f.password,client_id:nc.id,name:f.contact||f.company})}catch(e){await sb.from("clients").delete().eq("id",nc.id);throw e}S.sel=nc.id}
+    await loadAll();closeModal();toast("Client saved");route(id?S.page:"client",true)},
+  {extra:id?`<button type="button" class="danger" data-act="delClient" data-id="${id}">Delete client</button>`:""})};
+A.delClient=id=>confirmModal(`Delete <b>${esc(cname(id))}</b>, its login, all its leads and all its call records? This cannot be undone.`,"Delete everything",async()=>{
+  for(const u of S.profiles.filter(p=>p.client_id===id))await fn("admin-users",{action:"delete",user_id:u.id});
+  await q(sb.from("clients").delete().eq("id",id));await loadAll();toast("Client deleted");route("clients")});
+
+/* shared lead / call columns */
+function leadCols(actions,withClient){const lc=lastCalls();return[...(withClient?[["Client",l=>esc(cname(l.client_id))]]:[]),
+  ["Name",l=>`<b>${esc(l.name)}</b>`],["Phone",l=>esc(l.phone)],["Project",l=>esc(l.project||"–")],["Budget",l=>l.budget==null?"–":`₹${+l.budget}L`],
+  ["Verdict",l=>{const v=verdict(l,client(l.client_id));return`<span class="tag ${v[1]}">${v[0]}</span>`}],["Status",l=>stTag(l.status)],["Tries",l=>l.attempts||0],
+  ["Last call",l=>{const c=lc[l.id];return c?`${esc(c.outcome||c.status)} <span class="mute">· ${dt(c.created_at)}</span>`:"–"}],["Site visit",l=>d0(l.visit)],
+  ...(actions?[["",l=>`<button class="sm primary" data-act="aiCall" data-id="${l.id}" ${callable(l)?"":"disabled"}>🤖 AI call</button> <a class="btn" href="tel:+91${esc(l.phone)}" data-act="logCall" data-pass="1" data-id="${l.id}">📱 Call</a> <button class="sm" data-act="editLead" data-id="${l.id}">✎</button>`]]:[])]}
+function leadRows(L){const lc=lastCalls(),up=Object.fromEntries(S.uploads.map(u=>[u.id,u.filename]));return L.map(l=>{const c=lc[l.id]||{};return{Client:cname(l.client_id),Name:l.name,Phone:l.phone,"Budget (lakh)":l.budget,Project:l.project,Configuration:l.config,Location:l.location,Source:l.source,
+  Status:l.status,Verdict:verdict(l,client(l.client_id))[0],Attempts:l.attempts||0,"Last called":l.last_called_at?dt(l.last_called_at):"","Last call outcome":c.outcome||"","Key pressed":c.digits||"","Duration (sec)":c.duration||"",Recording:c.recording_url||"","Site visit":l.visit||"",Notes:l.notes||"","Upload file":up[l.upload_id]||""}})}
+function callCols(withClient){const ph=Object.fromEntries(S.leads.map(l=>[l.id,l.phone]));return[["Time",c=>dt(c.created_at)],...(withClient?[["Client",c=>esc(cname(c.client_id))]]:[]),["Lead",c=>`<b>${esc(c.lead_name||"–")}</b>`],["Phone",c=>esc(ph[c.lead_id]||"–")],
+  ["Type",c=>c.type],["Status",c=>`<span class="tag ${c.status==="completed"?"ok":["failed","busy","no-answer"].includes(c.status)?"bad":"info"}">${esc(c.status)}</span>`],["Outcome",c=>esc(c.outcome||"–")],
+  ["Key",c=>esc(c.digits||"–")],["Duration",c=>dur(c.duration)],["Recording",c=>c.recording_url?`<a href="${esc(c.recording_url)}" target="_blank" rel="noopener">▶ Play</a>`:"–"],["Note / error",c=>esc(c.error||c.notes||""),"wrap"]]}
+function callRows(C){const ph=Object.fromEntries(S.leads.map(l=>[l.id,l.phone]));return C.map(c=>({Time:dt(c.created_at),Client:cname(c.client_id),Lead:c.lead_name,Phone:ph[c.lead_id]||"",Type:c.type,Status:c.status,Outcome:c.outcome,"Key pressed":c.digits||"","Duration (sec)":c.duration||0,Recording:c.recording_url||"",Notes:c.error||c.notes||""}))}
+function uploadCols(){return[["Uploaded",u=>dt(u.created_at)],["File",u=>`<b>${esc(u.filename)}</b>`],["Rows in file",u=>u.total_rows],["Added",u=>`<span class="tag ok">${u.added}</span>`],["Duplicates skipped",u=>u.duplicates],["Invalid skipped",u=>u.invalid],
+  ["Called so far",u=>S.leads.filter(l=>l.upload_id===u.id&&(l.attempts||0)>0).length]]}
+function filterLeads(L){const s=fv("q").toLowerCase();return L.filter(l=>(!fv("client")||l.client_id===fv("client"))&&(!fv("status")||l.status===fv("status"))&&(!fv("upload")||l.upload_id===fv("upload"))&&
+  (!fv("verdict")||verdict(l,client(l.client_id))[0]===fv("verdict"))&&(!s||`${l.name} ${l.phone} ${l.project||""}`.toLowerCase().includes(s)))}
+function filterCalls(C){const s=fv("q").toLowerCase();return C.filter(c=>(!fv("client")||c.client_id===fv("client"))&&(!fv("cstatus")||c.status===fv("cstatus"))&&(!fv("from")||c.created_at.slice(0,10)>=fv("from"))&&(!fv("to")||c.created_at.slice(0,10)<=fv("to"))&&(!s||`${c.lead_name||""} ${c.outcome||""}`.toLowerCase().includes(s)))}
+P.a_leads=()=>{main(`<div class="bar" style="margin-top:0"><h2 class="grow">All leads</h2><button data-act="expLeads">⬇ Export Excel</button></div>
+  <div class="bar"><input placeholder="Search name, phone, project" data-f="q"><select data-f="client">${opt(S.clients.map(c=>[c.id,c.company]),"","All clients")}</select><select data-f="status">${opt(STATUSES,"","All statuses")}</select>
+  <select data-f="verdict">${opt(["Qualified","Stretch","No budget","Rejected"],"","All verdicts")}</select></div><div id="tbl"></div>`);
+  S.draw=()=>$("tbl").innerHTML=table(leadCols(false,true),filterLeads(S.leads),"No leads match.");S.draw()};
+A.expLeads=()=>xlsx("leads.xlsx",leadRows(filterLeads(adminMode()?S.leads:S.leads.filter(l=>l.client_id===cid()))));
+P.a_calls=()=>{main(`<div class="bar" style="margin-top:0"><h2 class="grow">All calls</h2><button data-act="refresh">↻ Refresh</button><button data-act="expCalls">⬇ Export Excel</button></div>
+  <div class="bar"><input placeholder="Search lead or outcome" data-f="q"><select data-f="client">${opt(S.clients.map(c=>[c.id,c.company]),"","All clients")}</select>
+  <select data-f="cstatus">${opt(["completed","no-answer","busy","failed","initiated","in-progress"],"","All statuses")}</select><input type="date" data-f="from" title="From"><input type="date" data-f="to" title="To"></div><div id="tbl"></div>`);
+  S.draw=()=>$("tbl").innerHTML=table(callCols(true),filterCalls(S.calls),"No calls match.");S.draw()};
+A.expCalls=()=>xlsx("calls.xlsx",callRows(filterCalls(adminMode()?S.calls:S.calls.filter(c=>c.client_id===cid()))));
+P.a_plans=()=>{main(`<h2>Plans</h2><div class="mute">What each client pays and how much they can use per month.</div><div style="margin-top:14px">${table([["Plan",p=>`<b>${esc(p.name)}</b>`],["Price / month",p=>rs(p.price)],["Lead limit",p=>p.lead_limit],["Minutes / month",p=>p.minute_limit],
+  ["Clients",p=>S.clients.filter(c=>c.plan_id===p.id).length],["",p=>`<button class="sm" data-act="editPlan" data-id="${p.id}">✎ Edit</button>`]],S.plans)}</div><div class="bar"><button class="primary" data-act="editPlan">+ Add plan</button></div>`)};
+A.editPlan=id=>{const p=id?S.plans.find(x=>x.id===id):{price:0,lead_limit:500,minute_limit:1000};formModal(id?"Edit plan":"Add plan",`
+  <div class="full"><label>Name *</label><input name="name" required value="${esc(p.name||"")}"></div><div><label>Price per month (₹)</label><input name="price" type="number" min="0" required value="${p.price}"></div>
+  <div><label>Lead limit</label><input name="lead_limit" type="number" min="1" required value="${p.lead_limit}"></div><div><label>Call minutes per month</label><input name="minute_limit" type="number" min="1" required value="${p.minute_limit}"></div>`,
+  async f=>{const row={name:f.name,price:+f.price,lead_limit:+f.lead_limit,minute_limit:+f.minute_limit};await q(id?sb.from("plans").update(row).eq("id",id):sb.from("plans").insert(row));await loadAll();closeModal();route("plans")})};
+P.a_calling=async()=>{main(`<h2>Calling setup</h2><div class="mute">Loading…</div>`);
+  const r=await q(sb.rpc("admin_get_exotel_config")),x=(Array.isArray(r)?r[0]:r)||{},ready=x.sid&&x.api_key&&x.has_token&&x.caller_id&&x.flow_id,hook=`${SB_URL}/functions/v1/exotel-webhook`,st=S.settings;
+  main(`<h2>Calling setup</h2><div class="banner ${ready?"info":"imp"}" style="border-radius:10px;margin-top:10px">${ready?"✅ Exotel details are saved. Test with your own number before giving access to clients.":"⚠ Calling is not connected. Until the Exotel details below are filled, no phone will ring for any client."}</div>
+  <form class="card" id="exf"><h3>Exotel account</h3><div class="grid">
+    <div><label>Account SID</label><input name="sid" value="${esc(x.sid||"")}" autocapitalize="none"></div><div><label>API key</label><input name="api_key" value="${esc(x.api_key||"")}" autocapitalize="none"></div>
+    <div><label>API token ${x.has_token?"(saved – blank keeps it)":""}</label><input name="api_token" type="password" autocomplete="off"></div>
+    <div><label>Region</label><select name="subdomain">${opt([["api.in.exotel.com","Mumbai (api.in.exotel.com)"],["api.exotel.com","Singapore (api.exotel.com)"]],x.subdomain||"api.in.exotel.com")}</select></div>
+    <div><label>ExoPhone (caller ID)</label><input name="caller_id" value="${esc(x.caller_id||"")}"></div><div><label>Call flow (App) ID</label><input name="flow_id" value="${esc(x.flow_id||"")}"></div>
+    <div><label>Call type</label><select name="call_type">${opt([["trans","Transactional"],["promo","Promotional"]],x.call_type||"trans")}</select></div></div>
+    <div class="mact"><button class="primary">Save Exotel details</button></div></form>
+  <div class="card"><h3>Call flow to build in Exotel (App Bazaar)</h3><ol class="steps"><li>Create a new flow and add a <b>Gather</b> applet. Choose "dynamic URL" and paste:<br><code>${hook}?a=gather&k=${esc(x.webhook_secret||"")}</code></li>
+    <li>After Gather, add a <b>Passthru</b> applet with this URL:<br><code>${hook}?a=digits&k=${esc(x.webhook_secret||"")}</code></li><li>Save the flow and enter its App ID above.</li></ol></div>
+  <form class="card" id="stf"><h3>Platform rules</h3><div class="grid">
+    <div><label>Calling</label><select name="calling_enabled">${opt([["true","On"],["false","Off (pause all calling)"]],String(st.calling_enabled))}</select></div><div><label>Max tries per lead</label><input name="max_attempts" type="number" min="1" max="10" value="${st.max_attempts}"></div>
+    <div><label>Calling starts (hour, IST)</label><input name="calling_hours_start" type="number" min="0" max="23" value="${st.calling_hours_start}"></div><div><label>Calling ends (hour, IST)</label><input name="calling_hours_end" type="number" min="1" max="24" value="${st.calling_hours_end}"></div></div>
+    <div class="mact"><button class="primary">Save rules</button></div></form>`);
+  $("exf").onsubmit=async e=>{e.preventDefault();try{const f=Object.fromEntries(new FormData(e.target).entries());
+    await q(sb.rpc("admin_set_exotel_config",{p_sid:f.sid,p_api_key:f.api_key,p_api_token:f.api_token,p_subdomain:f.subdomain,p_caller_id:f.caller_id,p_flow_id:f.flow_id,p_call_type:f.call_type}));toast("Exotel details saved");P.a_calling()}catch(er){toast(er.message,true)}};
+  $("stf").onsubmit=async e=>{e.preventDefault();try{const f=Object.fromEntries(new FormData(e.target).entries());
+    const row={calling_enabled:f.calling_enabled==="true",max_attempts:+f.max_attempts,calling_hours_start:+f.calling_hours_start,calling_hours_end:+f.calling_hours_end};
+    await q(sb.from("app_settings").update(row).eq("id",1));Object.assign(S.settings,row);toast("Rules saved")}catch(er){toast(er.message,true)}}};
+P.a_account=P.c_account=()=>main(`<h2>My account</h2><div class="card"><div><span class="mute">Login ID</span><br><code>${esc(S.me.username)}</code></div><div style="margin-top:10px"><span class="mute">Role</span><br>${isAdmin()?"Super admin":"Client · "+esc(cname())}</div>
+  <div class="bar"><button class="primary" data-act="pw">Change password</button></div></div>`);
+
+/* =====================================================================
+   CLIENT MODULE
+   ===================================================================== */
+const myLeads=()=>S.leads.filter(l=>l.client_id===cid()),myCalls=()=>S.calls.filter(c=>c.client_id===cid()),myUploads=()=>S.uploads.filter(u=>u.client_id===cid());
+P.c_dash=()=>{const c=client(),L=myLeads(),C=myCalls(),pl=plan(c),ans=C.filter(x=>x.status==="completed").length,by=s=>L.filter(l=>l.status===s).length;
+  main(`<div class="bar" style="margin-top:0"><h2 class="grow">${esc(c.company)}</h2><button data-act="refresh">↻ Refresh</button><button class="primary" data-act="go" data-id="upload">⬆ Upload calling list</button></div>
+  <div class="kpis"><div class="kpi">Leads<b>${L.length}</b><span class="mute">limit ${pl?.lead_limit??"∞"}</span></div><div class="kpi">Waiting to be called<b>${L.filter(l=>callable(l)&&!(l.attempts>0)).length}</b></div>
+    <div class="kpi">Calls made<b>${C.length}</b><span class="mute">${ans} answered</span></div><div class="kpi">Interested<b>${by("Interested")+by("Negotiation")}</b></div>
+    <div class="kpi">Site visits<b>${by("Site visit booked")+by("Visited")}</b></div><div class="kpi">Minutes this month<b>${minutesUsed(c.id)}</b><span class="mute">of ${pl?.minute_limit??"∞"}</span></div></div>
+  <h3 style="margin-top:20px">Leads by status</h3>${table([["Status",s=>stTag(s)],["Leads",s=>by(s)],["Share",s=>L.length?Math.round(by(s)*100/L.length)+"%":"–"]],STATUSES.filter(s=>by(s)),"No leads yet. Upload your Excel list to start.")}
+  <h3 style="margin-top:20px">Recent uploads</h3>${table(uploadCols(),myUploads().slice(0,5),"No uploads yet.")}`)};
+
+/* ----- Excel upload ----- */
+const FIELDS=[["name","Name",/name|customer|lead|client/i],["phone","Phone *",/phone|mobile|mob\b|contact|number|whatsapp/i],["budget","Budget",/budget/i],["project","Project",/project|property/i],
+  ["config","Configuration (BHK)",/bhk|config|type/i],["location","Location",/location|area|city|locality/i],["source","Source",/source|portal|channel/i],["notes","Notes",/note|remark|comment/i]];
+const normPhone=v=>{let d=String(v??"").replace(/\D/g,"");if(d.length===12&&d.startsWith("91"))d=d.slice(2);if(d.length===11&&d.startsWith("0"))d=d.slice(1);return/^[6-9]\d{9}$/.test(d)?d:null};
+function normBudget(v){const s=String(v??"").toLowerCase().replace(/[,₹\s]/g,"");if(!s)return null;const n=parseFloat(s);if(!isFinite(n)||n<=0)return null;
+  if(/cr/.test(s))return+(n*100).toFixed(2);if(/l/.test(s))return n;if(n>=100000)return+(n/100000).toFixed(2);return n}
+P.c_upload=()=>{S.up=null;main(`<h2>Upload calling list</h2><div class="mute">Upload an Excel or CSV file of the people to be called. Results appear under Leads and Call results.</div>
+  <div class="drop" style="margin-top:14px"><div style="font-size:30px">📄</div><b>Choose your Excel file</b><div class="mute" style="margin:6px 0 12px">.xlsx, .xls or .csv · the first row must be column headings · a phone column is required</div>
+    <input type="file" id="upf" accept=".xlsx,.xls,.csv" style="max-width:320px"><div style="margin-top:12px"><a href="#" data-act="template">⬇ Download the blank template</a></div></div>
+  <div id="upv"></div><h3 style="margin-top:22px">Previous uploads</h3>${table([...uploadCols(),["",u=>`<button class="sm" data-act="viewUpload" data-id="${u.id}">View leads</button>`]],myUploads(),"No uploads yet.")}`);
+  $("upf").onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:"",raw:false}).filter(r=>r.some(x=>String(x).trim()!==""));
+      if(rows.length<2)throw new Error("The file has no data rows under the heading row.");
+      const head=rows[0].map(h=>String(h).trim()),map={};for(const[k,,re]of FIELDS){const i=head.findIndex((h,j)=>re.test(h)&&!Object.values(map).includes(j));map[k]=i}
+      S.up={filename:file.name,head,rows:rows.slice(1),map};drawUpload()}catch(er){toast(er.message||"Could not read this file",true)}}};
+A.template=()=>{const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Name","Phone","Budget (lakh)","Project","Configuration","Location","Source","Notes"]]),"Leads");XLSX.writeFile(wb,"hisband-voice-lead-template.xlsx")};
+A.viewUpload=id=>{route("leads");S.f.upload=id;route("leads",true)};
+function parseUpload(){const u=S.up,m=u.map,have=new Set(myLeads().map(l=>l.phone)),seen=new Set(),ok=[],bad=[];let dupFile=0,dupCrm=0;
+  u.rows.forEach((r,i)=>{const g=k=>m[k]>=0?String(r[m[k]]??"").trim():"";const ph=normPhone(g("phone"));
+    if(!ph){bad.push({row:i+2,why:g("phone")?`"${g("phone")}" is not a valid 10-digit mobile number`:"Phone is blank"});return}
+    if(seen.has(ph)){dupFile++;return}seen.add(ph);if(have.has(ph)){dupCrm++;return}
+    ok.push({client_id:cid(),name:g("name")||"Unknown",phone:ph,budget:normBudget(g("budget")),project:g("project")||null,config:g("config")||null,location:g("location")||null,source:g("source")||"Excel upload",notes:g("notes")||null})});
+  return{ok,bad,dupFile,dupCrm}}
+function drawUpload(){const u=S.up,p=parseUpload(),pl=plan(client()),room=pl?pl.lead_limit-myLeads().length:Infinity,over=p.ok.length>room;S.up.parsed=p;
+  $("upv").innerHTML=`<div class="card"><h3>${esc(u.filename)} · ${u.rows.length} rows</h3>
+   <div class="mute">Check that each field is matched to the right column of your file.</div>
+   <div class="grid" style="margin-top:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${FIELDS.map(([k,l])=>`<div><label>${l}</label><select data-map="${k}">${opt(u.head.map((h,i)=>[i,h||`Column ${i+1}`]),u.map[k]>=0?u.map[k]:"","– not in file –")}</select></div>`).join("")}</div>
+   <div class="kpis"><div class="kpi">Will be added<b style="color:var(--ok)">${p.ok.length}</b></div><div class="kpi">Repeated in file<b>${p.dupFile}</b></div><div class="kpi">Already in your CRM<b>${p.dupCrm}</b></div><div class="kpi">Invalid phone<b style="color:${p.bad.length?"var(--bad)":"inherit"}">${p.bad.length}</b></div></div>
+   ${u.map.phone<0?`<div class="err">Choose which column holds the phone number.</div>`:""}
+   ${over?`<div class="err">Your plan has room for ${Math.max(room,0)} more leads but this file adds ${p.ok.length}. Remove some rows or ask Hisband Voice to upgrade your plan.</div>`:""}
+   ${p.ok.length?`<div class="mute" style="margin:6px 0">First rows that will be added:</div>${table([["Name",r=>esc(r.name)],["Phone",r=>r.phone],["Budget",r=>r.budget==null?"–":`₹${r.budget}L`],["Project",r=>esc(r.project||"–")],["Location",r=>esc(r.location||"–")]],p.ok.slice(0,5))}`:""}
+   ${p.bad.length?`<details style="margin-top:10px"><summary>${p.bad.length} rows will be skipped (see why)</summary><div class="mute" style="line-height:1.8">${p.bad.slice(0,50).map(b=>`Row ${b.row}: ${esc(b.why)}`).join("<br>")}${p.bad.length>50?"<br>…":""}</div></details>`:""}
+   <div class="mact"><button data-act="go" data-id="upload">Cancel</button><button class="primary" data-act="doImport" ${p.ok.length&&!over?"":"disabled"}>Add ${p.ok.length} leads</button></div></div>`}
+document.addEventListener("change",e=>{const k=e.target.dataset?.map;if(!k||!S.up)return;S.up.map[k]=e.target.value===""?-1:+e.target.value;drawUpload()});
+A.doImport=async(_,btn)=>{const u=S.up,p=u.parsed;btn.disabled=true;btn.textContent="Adding…";
+  const up=await q(sb.from("uploads").insert({client_id:cid(),filename:u.filename,total_rows:u.rows.length,added:0,duplicates:p.dupFile+p.dupCrm,invalid:p.bad.length,created_by:S.me.id}).select().single());
+  let added=0,err=null;for(let i=0;i<p.ok.length;i+=200){const chunk=p.ok.slice(i,i+200).map(r=>({...r,upload_id:up.id}));const{error}=await sb.from("leads").insert(chunk);if(error){err=error.message;break}added+=chunk.length}
+  await sb.from("uploads").update({added}).eq("id",up.id);await loadAll();
+  if(err)toast(`Added ${added} leads, then stopped: ${err}`,true);else toast(`${added} leads added`);A.viewUpload(up.id)};
+
+/* ----- leads + calling ----- */
+P.c_leads=()=>{main(`<div class="bar" style="margin-top:0"><h2 class="grow">Leads</h2><button data-act="editLead">+ Add lead</button><button data-act="expLeads">⬇ Export Excel</button><button class="ok" data-act="startQueue">▶ Start AI calling</button></div>
+  <div class="bar"><input placeholder="Search name, phone, project" data-f="q" value="${esc(fv("q"))}"><select data-f="upload">${opt(myUploads().map(u=>[u.id,`${u.filename} · ${d0(u.created_at)}`]),fv("upload"),"All uploads")}</select>
+  <select data-f="status">${opt(STATUSES,fv("status"),"All statuses")}</select><select data-f="verdict">${opt(["Qualified","Stretch","No budget","Rejected"],fv("verdict"),"All verdicts")}</select></div>
+  <div class="mute">"Start AI calling" calls every lead in the list below that is still waiting, one after another. Keep this page open while it runs.</div><div id="tbl" style="margin-top:10px"></div>`);
+  S.draw=()=>$("tbl").innerHTML=table(leadCols(true,false),filterLeads(myLeads()),"No leads yet. Use <b>Upload list</b> to add your Excel file.");S.draw()};
+A.editLead=id=>{const l=id?S.leads.find(x=>x.id===id):{status:"New"},c=client();formModal(id?"Edit lead":"Add lead",`
+  <div><label>Name *</label><input name="name" required value="${esc(l.name||"")}"></div><div><label>Mobile (10 digits) *</label><input name="phone" required inputmode="numeric" value="${esc(l.phone||"")}"></div>
+  <div><label>Budget (₹ lakh)</label><input name="budget" type="number" step="0.01" min="0" value="${l.budget??""}"></div><div><label>Project</label><input name="project" list="pl" value="${esc(l.project||"")}"><datalist id="pl">${(c.projects||[]).map(p=>`<option>${esc(p)}`).join("")}</datalist></div>
+  <div><label>Configuration</label><input name="config" value="${esc(l.config||"")}"></div><div><label>Location</label><input name="location" value="${esc(l.location||"")}"></div>
+  <div><label>Status</label><select name="status">${opt(STATUSES,l.status)}</select></div><div><label>Site visit date</label><input name="visit" type="date" value="${l.visit||""}"></div>
+  <div class="full"><label>Notes</label><textarea name="notes">${esc(l.notes||"")}</textarea></div>`,
+  async f=>{const ph=normPhone(f.phone);if(!ph)throw new Error("Enter a valid 10-digit Indian mobile number");
+    const row={name:f.name.trim(),phone:ph,budget:f.budget===""?null:+f.budget,project:f.project||null,config:f.config||null,location:f.location||null,status:f.status,visit:f.visit||null,notes:f.notes||null,updated_at:new Date().toISOString()};
+    const{error}=id?await sb.from("leads").update(row).eq("id",id):await sb.from("leads").insert({...row,client_id:cid(),source:"Manual"});
+    if(error)throw new Error(error.message.includes("leads_client_id_phone_key")?"This phone number is already in your leads":error.message);await loadAll();closeModal();S.draw&&S.draw();toast("Lead saved")},
+  {extra:id?`<button type="button" class="danger" data-act="delLead" data-id="${id}">Delete</button>`:""})};
+A.delLead=id=>confirmModal("Delete this lead? Its call records stay in Call results.","Delete lead",async()=>{await q(sb.from("leads").delete().eq("id",id));await loadAll();S.draw&&S.draw()});
+A.logCall=id=>{const l=S.leads.find(x=>x.id===id);setTimeout(()=>formModal(`Log your call with ${esc(l.name)}`,`<div class="full"><label>What happened?</label><select name="status">${opt(STATUSES.slice(1),"Interested")}</select></div>
+  <div><label>Site visit date (if booked)</label><input name="visit" type="date" value="${l.visit||""}"></div><div class="full"><label>Notes</label><textarea name="notes"></textarea></div>`,
+  async f=>{await q(sb.from("calls").insert({client_id:l.client_id,lead_id:l.id,lead_name:l.name,type:"Manual",status:f.status==="No answer"?"no-answer":"completed",outcome:f.status,notes:f.notes||null,created_by:S.me.id}));
+    await q(sb.from("leads").update({status:f.status,visit:f.visit||l.visit||null,attempts:(l.attempts||0)+1,last_called_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",l.id));await loadAll();closeModal();S.draw&&S.draw();toast("Call logged")},{ok:"Save outcome"}),300)};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitCall(callId){for(let i=0;i<30;i++){await sleep(4000);const c=await q(sb.from("calls").select("*").eq("id",callId).maybeSingle());if(c&&!["initiated","in-progress","ringing","queued"].includes(c.status))return c;if(S.queue?.stop)return c}return null}
+A.aiCall=async(id,btn)=>{if(btn){btn.disabled=true;btn.textContent="Calling…"}try{const r=await fn("call-lead",{lead_id:id});toast("Call placed – result will appear in a moment");await waitCall(r.call_id)}finally{await loadAll();S.draw&&S.draw()}};
+function stopQueue(){if(S.queue)S.queue.stop=true}
+A.stopQueue=stopQueue;
+function qbar(h){$("qbar").innerHTML=h?`<div class="banner info">${h}</div>`:""}
+A.startQueue=async()=>{if(S.queue)return toast("Calling is already running",true);const list=filterLeads(myLeads()).filter(callable).sort((a,b)=>(a.attempts||0)-(b.attempts||0));
+  if(!list.length)return toast("No leads in this list are waiting to be called",true);
+  const h=Number(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata",hour:"2-digit",hour12:false}))%24;
+  if(h<S.settings.calling_hours_start||h>=S.settings.calling_hours_end)return toast(`Calling is allowed only between ${S.settings.calling_hours_start}:00 and ${S.settings.calling_hours_end}:00 IST`,true);
+  confirmModal(`Start AI calls to <b>${list.length}</b> leads, one after another?`,"Start calling",async()=>{closeModal();runQueue(list)})};
+async function runQueue(list){S.queue={stop:false};let done=0,placed=0,skipped=0,halt="";
+  for(const l of list){if(S.queue.stop){halt="Stopped by you.";break}
+    qbar(`📞 Calling ${done+1} of ${list.length}: <b>${esc(l.name)}</b> · ${placed} placed, ${skipped} skipped <button class="sm" data-act="stopQueue">■ Stop</button>`);
+    try{const r=await fn("call-lead",{lead_id:l.id});placed++;await waitCall(r.call_id)}
+    catch(e){if(e.code==="no_exotel"||/not connected|switched off|Outside calling hours|minutes used up|suspended/i.test(e.message)){halt=e.message;break}skipped++}
+    done++;if(done%5===0){await loadAll();S.draw&&S.draw()}}
+  S.queue=null;await loadAll();S.draw&&S.draw();qbar(`${halt?"⚠ Calling stopped: "+esc(halt):"✅ Calling finished."} ${placed} calls placed, ${skipped} skipped. <button class="sm" data-act="clearQ">Dismiss</button>`)}
+A.clearQ=()=>qbar("");
+P.c_calls=()=>{main(`<div class="bar" style="margin-top:0"><h2 class="grow">Call results</h2><button data-act="refresh">↻ Refresh</button><button data-act="expCalls">⬇ Export Excel</button></div>
+  <div class="bar"><input placeholder="Search lead or outcome" data-f="q"><select data-f="cstatus">${opt(["completed","no-answer","busy","failed","initiated","in-progress"],"","All statuses")}</select><input type="date" data-f="from" title="From"><input type="date" data-f="to" title="To"></div><div id="tbl"></div>`);
+  S.draw=()=>$("tbl").innerHTML=table(callCols(false),filterCalls(myCalls()),"No calls yet. Results appear here as soon as calling starts.");S.draw()};
+P.c_visits=()=>{const L=myLeads().filter(l=>l.visit).sort((a,b)=>a.visit<b.visit?-1:1);main(`<h2>Site visits</h2><div class="mute">Leads with a visit date. A customer who presses 1 on the AI call is booked for the next day – confirm the exact time with them.</div>
+  <div style="margin-top:14px">${table([["Date",l=>`<b>${d0(l.visit)}</b>`],["Name",l=>esc(l.name)],["Phone",l=>`<a href="tel:+91${esc(l.phone)}">${esc(l.phone)}</a>`],["Project",l=>esc(l.project||"–")],["Status",l=>stTag(l.status)],
+  ["",l=>`<a target="_blank" rel="noopener" href="https://wa.me/91${esc(l.phone)}?text=${encodeURIComponent(`Namaste ${l.name}, confirming your site visit${l.project?" at "+l.project:""} on ${d0(l.visit)}. – ${cname()}`)}"><button class="sm" type="button">WhatsApp confirm</button></a> <button class="sm" data-act="editLead" data-id="${l.id}">✎</button>`]],L,"No site visits booked yet.")}</div>`);S.draw=()=>P.c_visits()};
+P.c_settings=()=>{const c=client();main(`<h2>Settings</h2><form class="card" id="csf"><h3>Budget rules</h3><div class="mute">Leads with a budget below (cutoff − stretch) are rejected and never called. Leads with no budget in the file are still called.</div>
+  <div class="grid" style="margin-top:10px"><div><label>Budget cutoff (₹ lakh)</label><input name="cutoff" type="number" step="0.01" min="0" required value="${+c.budget_cutoff}"></div><div><label>Stretch band below cutoff (₹ lakh)</label><input name="stretch" type="number" step="0.01" min="0" required value="${+c.budget_stretch}"></div>
+  <div><label>Upsell step (₹ lakh)</label><input name="step" type="number" step="0.01" min="1" required value="${+c.upsell_step}"></div><div><label>Projects (comma separated)</label><input name="projects" value="${esc((c.projects||[]).join(", "))}"></div>
+  <div class="full"><label>Call script · use {name}, {project}, {company}</label><textarea name="script" required>${esc(c.call_script)}</textarea></div></div><div class="mact"><button class="primary">Save settings</button></div></form>`);
+  $("csf").onsubmit=async e=>{e.preventDefault();try{const f=Object.fromEntries(new FormData(e.target).entries());
+    await q(sb.rpc("update_client_settings",{p_client_id:c.id,p_cutoff:+f.cutoff,p_stretch:+f.stretch,p_step:+f.step,p_script:f.script,p_projects:f.projects.split(",").map(s=>s.trim()).filter(Boolean)}));await loadAll();toast("Settings saved")}catch(er){toast(er.message,true)}}};
+
+start().catch(er=>{$("lerr").textContent=er.message});
+</script>
+</body>
+</html>
